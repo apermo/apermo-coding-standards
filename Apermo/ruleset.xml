@@ -8,6 +8,11 @@
 		<include-pattern>*\.php$</include-pattern>
 	</rule>
 
+	<!-- Superseded by Apermo.PHP.ExplainCommentedOutCode. -->
+	<rule ref="Squiz.PHP.CommentedOutCode.Found">
+		<severity>0</severity>
+	</rule>
+
 	<!-- WordPress Ruleset -->
 	<rule ref="WordPress">
 		<!-- We use short array syntax. -->
