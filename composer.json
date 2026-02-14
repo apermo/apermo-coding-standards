@@ -1,0 +1,21 @@
+{
+	"name": "apermo/wp-coding-standards",
+	"description": "Shared PHPCS coding standards for WordPress projects by Apermo.",
+	"type": "phpcodesniffer-standard",
+	"license": "MIT",
+	"require": {
+		"php": ">=8.3",
+		"squizlabs/php_codesniffer": "^3.10",
+		"wp-coding-standards/wpcs": "^3.0",
+		"slevomat/coding-standard": "^8.0",
+		"yoast/yoastcs": "^3.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+	},
+	"config": {
+		"lock": false,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}
