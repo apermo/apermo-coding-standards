@@ -23,13 +23,13 @@ class ExplainCommentedOutCodeUnitTest extends AbstractSniffUnitTest {
 	 */
 	protected function getErrorList( $testFile = '' ) {
 		return [
-			20 => 1,
-			26 => 1,
 			29 => 1,
-			33 => 1,
-			37 => 1,
-			40 => 1,
+			35 => 1,
+			38 => 1,
+			42 => 1,
+			46 => 1,
 			49 => 1,
+			58 => 1,
 		];
 	}
 

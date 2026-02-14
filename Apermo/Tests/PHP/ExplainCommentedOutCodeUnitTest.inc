@@ -13,6 +13,15 @@ $a = 1;
 // $rollback = new RollbackHandler( $args );
 // $rollback->register();
 
+/** Debug: Logging for intermittent cron failure. */
+// error_log( 'Cron heartbeat: ' . time() );
+
+/** Review: Found during refactor, unclear if still needed. */
+// register_post_type( 'legacy_type', $args );
+
+/** WIP: Partially migrated to new API. */
+// $client = new OldApiClient( $config );
+
 /** Disabled (2026-01-15): Waiting for upstream fix. */
 
 // $gap_code = call_function( $param );

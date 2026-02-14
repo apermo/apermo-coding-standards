@@ -39,7 +39,7 @@ class ExplainCommentedOutCodeSniff implements Sniff {
 	 *
 	 * @var string
 	 */
-	public $keywords = 'Disabled,Kept';
+	public $keywords = 'Disabled,Kept,Debug,Review,WIP';
 
 	/**
 	 * Returns an array of tokens this sniff listens for.
