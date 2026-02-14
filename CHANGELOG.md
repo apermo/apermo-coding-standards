@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   deeply nested or wide associative arrays that would
   benefit from typed objects. Configurable warning/error
   thresholds for nesting depth and key count.
+- `Apermo.WordPress.GlobalPostAccess` sniff: flags
+  `global $post;` inside functions, methods, closures,
+  and arrow functions. Pass `WP_Post` or post ID instead.
+- `Apermo.WordPress.ImplicitPostFunction` sniff: flags
+  WordPress template functions (e.g. `get_the_title()`,
+  `get_permalink()`) called without an explicit post
+  argument inside function scopes.
 
 ## [1.1.0] - 2026-02-14
 

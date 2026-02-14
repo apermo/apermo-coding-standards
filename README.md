@@ -223,6 +223,63 @@ $grid = [ [ 1, 2 ], [ 3, 4 ] ];
 </rule>
 ```
 
+### Global Post Access (`Apermo.WordPress.GlobalPostAccess`)
+
+Flags `global $post;` inside functions, methods, closures, and arrow functions. Top-level (template) usage is allowed because the WordPress loop sets `$post` there. Functions should receive `WP_Post` or a post ID as a parameter.
+
+```php
+// Bad — hidden dependency on global state
+function get_title() {
+    global $post;
+    return $post->post_title;
+}
+
+// Good — explicit dependency
+function get_title( WP_Post $post ) {
+    return $post->post_title;
+}
+```
+
+### Implicit Post Function (`Apermo.WordPress.ImplicitPostFunction`)
+
+Flags WordPress template functions called without an explicit post argument inside function scopes. These functions implicitly read the global `$post`, creating hidden dependencies.
+
+Three error codes at different severities:
+
+| Code | Severity | Applies to |
+|---|---|---|
+| `DirectAccess` | error | `get_post()`, `get_the_ID()`, `the_ID()` |
+| `MissingPostParameter` | warning | Functions with optional post param not provided |
+| `NoPostParameter` | warning | Functions that have no post param at all |
+
+```php
+// Bad — implicit global access inside function
+function render() {
+    $title = get_the_title();      // warning
+    $id    = get_the_ID();         // error
+}
+
+// Good — explicit post argument
+function render( WP_Post $post ) {
+    $title = get_the_title( $post );
+    $id    = $post->ID;
+}
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Downgrade DirectAccess errors to warnings -->
+<rule ref="Apermo.WordPress.ImplicitPostFunction.DirectAccess">
+    <type>warning</type>
+</rule>
+
+<!-- Disable NoPostParameter warnings entirely -->
+<rule ref="Apermo.WordPress.ImplicitPostFunction.NoPostParameter">
+    <severity>0</severity>
+</rule>
+```
+
 ### Elseif Over Else If (`PSR2.ControlStructures.ElseIfDeclaration`)
 
 `else if` must be written as `elseif`. Upgraded from the PSR2 default warning to an error.
