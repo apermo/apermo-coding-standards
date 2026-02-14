@@ -164,6 +164,65 @@ Separate error codes (`IncludeFound`, `IncludeOnceFound`) allow independent conf
 </rule>
 ```
 
+### Array Complexity (`Apermo.DataStructures.ArrayComplexity`)
+
+Flags deeply nested or wide associative arrays that would benefit from typed objects (DTOs, value objects). Arrays with many string keys or deep nesting often indicate data structures that should be classes.
+
+Two independent checks, each with a warning and error threshold:
+
+| Check | Warning | Error | Default |
+|---|---|---|---|
+| Nesting depth | `TooDeep` | `TooDeepError` | warn > 2, error > 3 |
+| Key count | `TooManyKeys` | `TooManyKeysError` | warn > 5, error > 10 |
+
+Only outermost arrays are checked — nested sub-arrays are not reported separately. Numeric arrays (without `=>`) are ignored entirely.
+
+```php
+// Warning — 3 levels of associative nesting
+$order = [
+    'customer' => [
+        'address' => [
+            'city' => 'Berlin',
+        ],
+    ],
+];
+
+// Warning — 6 associative keys
+$user = [
+    'id'       => 1,
+    'name'     => 'John',
+    'email'    => 'john@example.com',
+    'role'     => 'admin',
+    'active'   => true,
+    'verified' => true,
+];
+
+// OK — numeric arrays are ignored
+$grid = [ [ 1, 2 ], [ 3, 4 ] ];
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Adjust thresholds -->
+<rule ref="Apermo.DataStructures.ArrayComplexity">
+    <properties>
+        <property name="warnDepth" value="3"/>
+        <property name="errorDepth" value="5"/>
+        <property name="warnKeys" value="8"/>
+        <property name="errorKeys" value="15"/>
+    </properties>
+</rule>
+
+<!-- Disable key count checks entirely -->
+<rule ref="Apermo.DataStructures.ArrayComplexity.TooManyKeys">
+    <severity>0</severity>
+</rule>
+<rule ref="Apermo.DataStructures.ArrayComplexity.TooManyKeysError">
+    <severity>0</severity>
+</rule>
+```
+
 ### Elseif Over Else If (`PSR2.ControlStructures.ElseIfDeclaration`)
 
 `else if` must be written as `elseif`. Upgraded from the PSR2 default warning to an error.

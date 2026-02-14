@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `Apermo.DataStructures.ArrayComplexity` sniff: flags
+  deeply nested or wide associative arrays that would
+  benefit from typed objects. Configurable warning/error
+  thresholds for nesting depth and key count.
+
 ## [1.1.0] - 2026-02-14
 
 ### Added
