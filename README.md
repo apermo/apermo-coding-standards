@@ -1,5 +1,7 @@
 # Apermo WordPress Coding Standards
 
+[![CI](https://github.com/apermo/wp-coding-standards/actions/workflows/ci.yml/badge.svg)](https://github.com/apermo/wp-coding-standards/actions/workflows/ci.yml)
+
 Shared [PHPCS](https://github.com/PHPCSStandards/PHP_CodeSniffer) ruleset for WordPress projects. Combines WordPress Coding Standards, Slevomat type hints, YoastCS, and PHPCompatibility into a single reusable standard.
 
 ## Requirements
@@ -244,19 +246,22 @@ function get_title( WP_Post $post ) {
 
 Flags WordPress template functions called without an explicit post argument inside function scopes. These functions implicitly read the global `$post`, creating hidden dependencies.
 
-Three error codes at different severities:
+Severity depends on what was passed, not which function:
 
-| Code | Severity | Applies to |
+| Code | Severity | When |
 |---|---|---|
-| `DirectAccess` | error | `get_post()`, `get_the_ID()`, `the_ID()` |
-| `MissingPostParameter` | warning | Functions with optional post param not provided |
-| `NoPostParameter` | warning | Functions that have no post param at all |
+| `MissingArgument` | error | Post param exists but no argument provided |
+| `NullArgument` | error | Literal `null` passed as post argument |
+| `IntegerArgument` | warning | Literal int or `$var->ID` passed |
+| `NoPostParameter` | error | Function has no post param at all |
 
 ```php
 // Bad — implicit global access inside function
 function render() {
-    $title = get_the_title();      // warning
-    $id    = get_the_ID();         // error
+    $title = get_the_title();        // error: MissingArgument
+    $id    = get_the_ID();           // error: NoPostParameter
+    get_the_title( null );           // error: NullArgument
+    get_the_title( $post->ID );      // warning: IntegerArgument
 }
 
 // Good — explicit post argument
@@ -269,12 +274,12 @@ function render( WP_Post $post ) {
 **Customization** via `phpcs.xml`:
 
 ```xml
-<!-- Downgrade DirectAccess errors to warnings -->
-<rule ref="Apermo.WordPress.ImplicitPostFunction.DirectAccess">
+<!-- Downgrade to warning during migration -->
+<rule ref="Apermo.WordPress.ImplicitPostFunction.MissingArgument">
     <type>warning</type>
 </rule>
 
-<!-- Disable NoPostParameter warnings entirely -->
+<!-- Disable NoPostParameter errors entirely -->
 <rule ref="Apermo.WordPress.ImplicitPostFunction.NoPostParameter">
     <severity>0</severity>
 </rule>
