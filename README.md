@@ -74,6 +74,9 @@ vendor/bin/phpcs
 - `require`/`require_once` enforced over `include`/`include_once`
 - `elseif` enforced over `else if`
 - Unconditional `if` statements (`if (true)`) are errors
+- `stdClass` usage discouraged — `new \stdClass()` and `(object)` casts warned
+- Hook invocations (`do_action`, `apply_filters`) require PHPDoc blocks
+- Assignment alignment must be consistent within groups (all aligned or all single-space)
 
 ### Commented-Out Code (`Apermo.PHP.ExplainCommentedOutCode`)
 
@@ -294,6 +297,179 @@ function render( WP_Post $post ) {
 
 <!-- Disable NoPostParameter errors entirely -->
 <rule ref="Apermo.WordPress.ImplicitPostFunction.NoPostParameter">
+    <severity>0</severity>
+</rule>
+```
+
+### Forbidden stdClass (`Apermo.PHP.ForbiddenObjectCast` + `SlevomatCodingStandard.PHP.ForbiddenClasses`)
+
+Discourages `stdClass` usage in favor of typed classes. Two rules work together:
+
+- `Apermo.PHP.ForbiddenObjectCast` warns on `(object)` casts
+- `SlevomatCodingStandard.PHP.ForbiddenClasses` warns on `new \stdClass()`
+
+Both emit warnings (not errors) to allow gradual migration.
+
+```php
+// Bad — untyped data bags
+$config = (object) [ 'host' => 'localhost', 'port' => 3306 ];
+$dto = new \stdClass();
+
+// Good — typed classes
+class DbConfig {
+    public function __construct(
+        public string $host,
+        public int $port,
+    ) {}
+}
+$config = new DbConfig( 'localhost', 3306 );
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Disable the (object) cast warning -->
+<rule ref="Apermo.PHP.ForbiddenObjectCast.Found">
+    <severity>0</severity>
+</rule>
+
+<!-- Disable the new stdClass() warning -->
+<rule ref="SlevomatCodingStandard.PHP.ForbiddenClasses">
+    <severity>0</severity>
+</rule>
+```
+
+### Hook Documentation (`Apermo.Hooks.RequireHookDocBlock`)
+
+WordPress hook invocations (`do_action`, `apply_filters`, and their `_ref_array` and `_deprecated` variants) must be preceded by a PHPDoc block.
+
+The sniff checks:
+
+| Code | When |
+|---|---|
+| `Missing` | No PHPDoc block before the hook call |
+| `MissingParam` | Hook passes arguments but doc block has no `@param` tags |
+| `MissingReturn` | `apply_filters*` call without a `@return` tag |
+
+All violations are warnings.
+
+```php
+// Bad — no documentation
+do_action( 'my_plugin_init', $config );
+
+// Good — documented hook
+/**
+ * Fires after plugin initialization.
+ *
+ * @param array $config Plugin configuration.
+ */
+do_action( 'my_plugin_init', $config );
+
+// Bad — filter missing @return
+/**
+ * @param string $title The title.
+ */
+apply_filters( 'my_title', $title );
+
+// Good — filter with @return
+/**
+ * Filters the display title.
+ *
+ * @param string $title The title.
+ *
+ * @return string Filtered title.
+ */
+apply_filters( 'my_title', $title );
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Disable entirely -->
+<rule ref="Apermo.Hooks.RequireHookDocBlock">
+    <severity>0</severity>
+</rule>
+
+<!-- Only require doc blocks, skip param/return checks -->
+<rule ref="Apermo.Hooks.RequireHookDocBlock.MissingParam">
+    <severity>0</severity>
+</rule>
+<rule ref="Apermo.Hooks.RequireHookDocBlock.MissingReturn">
+    <severity>0</severity>
+</rule>
+```
+
+### Consistent Assignment Alignment (`Apermo.Formatting.ConsistentAssignmentAlignment`)
+
+Consecutive assignment statements must use a consistent style: either all `=` operators are aligned to the same column, or all use a single space before `=`. Mixing styles within a group is warned.
+
+A group of assignments breaks on: blank lines, non-assignment statements, or EOF.
+
+Supersedes `Generic.Formatting.MultipleStatementAlignment` — that rule is disabled automatically.
+
+```php
+// OK — all single-space
+$a = 1;
+$bb = 2;
+$ccc = 3;
+
+// OK — all aligned
+$a   = 1;
+$bb  = 2;
+$ccc = 3;
+
+// Warning — mixed styles
+$short = 1;
+$veryLongName = 2;
+$x            = 3;
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Disable entirely -->
+<rule ref="Apermo.Formatting.ConsistentAssignmentAlignment.InconsistentAlignment">
+    <severity>0</severity>
+</rule>
+```
+
+### Consistent Double Arrow Alignment (`Apermo.Arrays.ConsistentDoubleArrowAlignment`)
+
+Multi-line associative arrays must use a consistent `=>` style: either all arrows are aligned to the same column, or all use a single space before `=>`. Mixing styles within an array is warned.
+
+Only outermost arrays are checked — nested sub-arrays are analyzed independently. Single-line arrays are skipped.
+
+Supersedes `WordPress.Arrays.MultipleStatementAlignment` — that rule is disabled automatically.
+
+```php
+// OK — all single-space
+$config = [
+    'host' => 'localhost',
+    'port' => 3306,
+    'database' => 'mydb',
+];
+
+// OK — all aligned
+$config = [
+    'host'     => 'localhost',
+    'port'     => 3306,
+    'database' => 'mydb',
+];
+
+// Warning — mixed styles
+$config = [
+    'host' => 'localhost',
+    'port' => 3306,
+    'database_name' => 'mydb',
+    'x'             => 'value',
+];
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Disable entirely -->
+<rule ref="Apermo.Arrays.ConsistentDoubleArrowAlignment.InconsistentAlignment">
     <severity>0</severity>
 </rule>
 ```

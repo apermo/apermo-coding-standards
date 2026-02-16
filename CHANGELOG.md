@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-02-16
+
+### Added
+
+- `Apermo.PHP.ForbiddenObjectCast` sniff: warns on
+  `(object)` casts that implicitly create `stdClass`
+  instances. Use typed classes instead.
+- `SlevomatCodingStandard.PHP.ForbiddenClasses` config:
+  warns on `new \stdClass()` usage. Use typed classes
+  instead.
+- `Apermo.Hooks.RequireHookDocBlock` sniff: warns when
+  WordPress hook invocations (`do_action`,
+  `apply_filters`, etc.) lack a preceding PHPDoc block.
+  Checks for `@param` and `@return` tags. Supports
+  `_ref_array` and `_deprecated` variants.
+- `Apermo.Formatting.ConsistentAssignmentAlignment`
+  sniff: warns when consecutive assignment statements
+  mix single-space and aligned styles. Either all `=`
+  operators align to the same column, or all use a
+  single space — mixing is flagged.
+- `Apermo.Arrays.ConsistentDoubleArrowAlignment` sniff:
+  warns when multi-line arrays mix single-space and
+  aligned `=>` styles. Same consistency rule as the
+  assignment alignment sniff.
+
+### Changed
+
+- Exclusion comments for
+  `Generic.Formatting.MultipleStatementAlignment` and
+  `WordPress.Arrays.MultipleStatementAlignment` now say
+  "Superseded by" the new Apermo alignment sniffs.
+
 ## [1.2.1] - 2026-02-16
 
 ### Added
@@ -112,6 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPCompatibility checks targeting PHP 8.3+.
 - Empty `Apermo/Sniffs/` directory for future custom sniffs.
 
+[1.3.0]: https://github.com/apermo/wp-coding-standards/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/apermo/wp-coding-standards/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/apermo/wp-coding-standards/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/apermo/wp-coding-standards/compare/v1.0.0...v1.1.0

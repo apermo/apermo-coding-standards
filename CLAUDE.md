@@ -44,6 +44,11 @@ vendor/bin/phpcs --standard=Apermo /path/to/test-file.php
 vendor/bin/phpcs -i
 ```
 
+## Workflow
+
+- After completing each task (feature, fix, etc.), create an atomic commit immediately.
+- Do not batch multiple tasks into a single commit.
+
 ## Releasing
 
 1. Commit changes, push to `main`
