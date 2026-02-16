@@ -11,23 +11,93 @@ permissions:
   pull-requests: write
 
 jobs:
-  validate-changelog:
-    name: Check CHANGELOG Entry
+  validate-version:
+    name: Check Version Bump
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
 
-      - name: Check CHANGELOG was updated
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: base
+
+      - name: Compare versions
+        id: version-check
+        run: |
+          PR_VERSION=$(php -r "echo json_decode(file_get_contents('composer.json'))->version;")
+          BASE_VERSION=$(php -r "echo json_decode(file_get_contents('base/composer.json'))->version;")
+
+          echo "PR Version: $PR_VERSION"
+          echo "Base Version: $BASE_VERSION"
+
+          if [ "$PR_VERSION" = "$BASE_VERSION" ]; then
+            echo "result=failed" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "result=success" >> $GITHUB_OUTPUT
+            echo "pr_version=$PR_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR (failure)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' &&
+              c.body.includes('Version Check Failed')
+            );
+
+            const body = '## Version Check Failed\n\nPlease bump the version in `composer.json`.';
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              });
+            }
+
+    outputs:
+      pr_version: ${{ steps.version-check.outputs.pr_version }}
+      result: ${{ steps.version-check.outputs.result }}
+
+  validate-changelog:
+    name: Check CHANGELOG Entry
+    runs-on: ubuntu-latest
+    needs: validate-version
+    if: needs.validate-version.outputs.result == 'success'
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check CHANGELOG
         id: changelog-check
         run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
-          CHANGED=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD)
+          PR_VERSION="${{ needs.validate-version.outputs.pr_version }}"
 
-          if echo "$CHANGED" | grep -q "^CHANGELOG.md$"; then
+          if grep -q "\[$PR_VERSION\]" CHANGELOG.md; then
             echo "result=success" >> $GITHUB_OUTPUT
           else
             echo "result=failed" >> $GITHUB_OUTPUT
@@ -47,10 +117,10 @@ jobs:
 
             const existing = comments.find(c =>
               c.user.type === 'Bot' &&
-              c.body.includes('CHANGELOG Check')
+              c.body.includes('CHANGELOG Check Failed')
             );
 
-            const body = '## CHANGELOG Check Failed\n\nPlease update `CHANGELOG.md` with your changes following [Keep a Changelog](https://keepachangelog.com/) format.';
+            const body = '## CHANGELOG Check Failed\n\nPlease add an entry for version `${{ needs.validate-version.outputs.pr_version }}` to `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/) format.';
 
             if (existing) {
               await github.rest.issues.updateComment({
