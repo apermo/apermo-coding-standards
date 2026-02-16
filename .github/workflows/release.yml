@@ -19,22 +19,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get version from CHANGELOG
+      - name: Get version from composer.json
         id: version
         run: |
-          # Extract first versioned section (not [Unreleased])
-          VERSION=$(grep -oP '## \[\K\d+\.\d+\.\d+' CHANGELOG.md | head -1)
-          if [ -z "$VERSION" ]; then
-            echo "No version found in CHANGELOG.md"
-            echo "found=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
+          VERSION=$(php -r "echo json_decode(file_get_contents('composer.json'))->version;")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "found=true" >> $GITHUB_OUTPUT
 
       - name: Check if tag exists
-        if: steps.version.outputs.found == 'true'
         id: check-tag
         run: |
           if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
@@ -44,7 +36,7 @@ jobs:
           fi
 
       - name: Extract changelog notes
-        if: steps.version.outputs.found == 'true' && steps.check-tag.outputs.exists == 'false'
+        if: steps.check-tag.outputs.exists == 'false'
         id: changelog
         run: |
           VERSION="${{ steps.version.outputs.version }}"
@@ -52,7 +44,7 @@ jobs:
           echo "$NOTES" > release_notes.md
 
       - name: Create draft release
-        if: steps.version.outputs.found == 'true' && steps.check-tag.outputs.exists == 'false'
+        if: steps.check-tag.outputs.exists == 'false'
         id: create-release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -66,7 +58,7 @@ jobs:
           echo "url=$RELEASE_URL" >> $GITHUB_OUTPUT
 
       - name: Comment on merged PR
-        if: steps.version.outputs.found == 'true' && steps.check-tag.outputs.exists == 'false'
+        if: steps.check-tag.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
