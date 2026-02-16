@@ -2,6 +2,8 @@
 
 Shared PHPCS coding standards package for WordPress projects by Apermo.
 
+GitHub: https://github.com/apermo/wp-coding-standards
+
 ## Overview
 
 This is a `phpcodesniffer-standard` Composer package. It provides a reusable PHPCS ruleset (`Apermo`) that combines WordPress Coding Standards, Slevomat type hints, YoastCS, and PHPCompatibility.

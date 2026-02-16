@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- GitHub Actions: CI workflow (PHPUnit on PHP 8.3 + 8.4)
+- GitHub Actions: conventional commits validation
+- GitHub Actions: automated draft release on push to main
+- GitHub Actions: PR validation (CHANGELOG entry check)
+- GitHub Actions: stale issue/PR cleanup
+- Renovate bot for dependency updates
+
+### Changed
+
+- Updated `ImplicitPostFunction` docs in README to
+  reflect redesigned error codes from v1.2.0.
+
 ## [1.2.0] - 2026-02-15
 
 ### Added
