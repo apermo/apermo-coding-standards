@@ -47,6 +47,12 @@ jobs:
           INVALID_COMMITS=()
 
           for COMMIT in $COMMITS; do
+            # Skip merge commits (e.g. GitHub "Merge pull request" button)
+            PARENTS=$(git rev-list --parents -n 1 $COMMIT | wc -w)
+            if [ "$PARENTS" -gt 2 ]; then
+              continue
+            fi
+
             MSG=$(git log --format=%B -n 1 $COMMIT | head -n 1)
 
             if ! echo "$MSG" | grep -qE "$PATTERN"; then
