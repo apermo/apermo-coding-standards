@@ -132,4 +132,14 @@
 	<rule ref="Universal.UseStatements.DisallowUseFunction"/>
 
 	<rule ref="PSR1.Classes.ClassDeclaration"/>
+
+	<!-- Discourage stdClass usage — use typed classes instead. -->
+	<rule ref="SlevomatCodingStandard.PHP.ForbiddenClasses">
+		<properties>
+			<property name="forbiddenClasses" type="array">
+				<element key="\stdClass" value="null"/>
+			</property>
+		</properties>
+		<type>warning</type>
+	</rule>
 </ruleset>
