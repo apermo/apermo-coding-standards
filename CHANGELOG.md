@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-02-16
+
 ### Added
 
 - GitHub Actions: CI workflow (PHPUnit on PHP 8.3 + 8.4)
@@ -18,8 +20,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated `ImplicitPostFunction` docs in README to
-  reflect redesigned error codes from v1.2.0.
+- PR validation now requires version bump in
+  `composer.json` and matching CHANGELOG entry.
+- Release workflow reads version from `composer.json`
+  instead of parsing CHANGELOG.md.
+- Added `version`, `authors`, `homepage`, `support`,
+  and `keywords` to `composer.json`.
+- Track `composer.lock` for Renovate dependency
+  management.
+
+### Fixed
+
+- Skip merge commits in conventional commit validation.
+- Remove `edited` PR trigger from commit validation
+  to avoid redundant runs on description changes.
+- README installation section now shows VCS repository
+  setup (package is not yet on Packagist).
+- README `ImplicitPostFunction` docs updated to reflect
+  redesigned error codes from v1.2.0.
 
 ## [1.2.0] - 2026-02-15
 
@@ -94,6 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPCompatibility checks targeting PHP 8.3+.
 - Empty `Apermo/Sniffs/` directory for future custom sniffs.
 
+[1.2.1]: https://github.com/apermo/wp-coding-standards/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/apermo/wp-coding-standards/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/apermo/wp-coding-standards/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/apermo/wp-coding-standards/releases/tag/v1.0.0
