@@ -48,6 +48,7 @@ vendor/bin/phpcs -i
 
 - After completing each task (feature, fix, etc.), create an atomic commit immediately.
 - Do not batch multiple tasks into a single commit.
+- When a commit resolves a GitHub issue, include `Closes #<number>` in the commit body so the issue is auto-closed when the PR is merged.
 
 ## Releasing
 
