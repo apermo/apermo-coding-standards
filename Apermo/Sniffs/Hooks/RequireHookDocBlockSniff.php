@@ -147,11 +147,11 @@ class RequireHookDocBlockSniff implements Sniff {
 	/**
 	 * Validate the doc block has required @param and @return tags.
 	 *
-	 * @param File   $phpcsFile The file being scanned.
-	 * @param int    $stackPtr  The hook function token position.
-	 * @param array  $docBlock  Doc block boundaries with 'open' and 'close' keys.
-	 * @param string $hookType  'action' or 'filter'.
-	 * @param string $funcName  The lowercased hook function name.
+	 * @param File                        $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The hook function token position.
+	 * @param array{open: int, close: int} $docBlock  Doc block boundaries with 'open' and 'close' keys.
+	 * @param string                      $hookType  'action' or 'filter'.
+	 * @param string                      $funcName  The lowercased hook function name.
 	 *
 	 * @return void
 	 */

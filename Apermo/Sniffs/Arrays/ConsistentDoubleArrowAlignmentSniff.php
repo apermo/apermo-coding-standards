@@ -159,8 +159,8 @@ class ConsistentDoubleArrowAlignmentSniff implements Sniff {
 	 * - Single-space: all `=>` have exactly 1 space before them
 	 * - Aligned: all `=>` are at the same column
 	 *
-	 * @param File  $phpcsFile The file being scanned.
-	 * @param array $arrows    The collected arrow info.
+	 * @param File                                                       $phpcsFile The file being scanned.
+	 * @param array<int, array{ptr: int, spaces: int, column: int, lhs_end: int}> $arrows    The collected arrow info.
 	 *
 	 * @return void
 	 */

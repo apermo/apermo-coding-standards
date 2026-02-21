@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   longest left-hand side.
 - Codecov integration: test coverage reporting on
   PHP 8.4 with PCOV, uploaded on every PR and push.
-- PHPStan level 5 with strict-rules for sniff source
+- PHPStan level 6 with strict-rules for sniff source
   code, integrated into CI pipeline.
 - GitHub Actions: prerelease workflow for `release/*`
   branches via `workflow_dispatch`.

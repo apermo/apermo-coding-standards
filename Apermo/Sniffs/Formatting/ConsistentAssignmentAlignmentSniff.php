@@ -45,7 +45,7 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 		$tokens = $phpcsFile->getTokens();
 
 		// Skip assignments inside for() parentheses.
-		if ( ! empty( $tokens[ $stackPtr ]['nested_parenthesis'] ) ) {
+		if ( isset( $tokens[ $stackPtr ]['nested_parenthesis'] ) && $tokens[ $stackPtr ]['nested_parenthesis'] !== [] ) {
 			return $stackPtr + 1;
 		}
 
@@ -85,7 +85,7 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 
 			if ( isset( Tokens::$assignmentTokens[ $tokens[ $i ]['code'] ] )
 				&& $tokens[ $i ]['code'] !== T_DOUBLE_ARROW
-				&& empty( $tokens[ $i ]['nested_parenthesis'] )
+				&& ( ! isset( $tokens[ $i ]['nested_parenthesis'] ) || $tokens[ $i ]['nested_parenthesis'] === [] )
 			) {
 				return true;
 			}
@@ -117,7 +117,7 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 
 			if ( isset( Tokens::$assignmentTokens[ $tokens[ $i ]['code'] ] )
 				&& $tokens[ $i ]['code'] !== T_DOUBLE_ARROW
-				&& empty( $tokens[ $i ]['nested_parenthesis'] )
+				&& ( ! isset( $tokens[ $i ]['nested_parenthesis'] ) || $tokens[ $i ]['nested_parenthesis'] === [] )
 			) {
 				return $i;
 			}
@@ -263,8 +263,8 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 	 * If either style is satisfied, the group is consistent. Otherwise,
 	 * the minority deviators from the more popular style are flagged.
 	 *
-	 * @param File  $phpcsFile The file being scanned.
-	 * @param array $group     The collected group of assignments.
+	 * @param File                                                                  $phpcsFile The file being scanned.
+	 * @param array<int, array{ptr: int, spaces: int, column: int, line: int, lhs_end: int}> $group     The collected group of assignments.
 	 *
 	 * @return void
 	 */
@@ -397,13 +397,13 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 	/**
 	 * Get the stack pointer past the last member of a group.
 	 *
-	 * @param array $group    The collected group.
-	 * @param int   $stackPtr Fallback position.
+	 * @param array<int, array{ptr: int, spaces: int, column: int, line: int, lhs_end: int}> $group    The collected group.
+	 * @param int                                                                            $stackPtr Fallback position.
 	 *
 	 * @return int Next position to process.
 	 */
 	private function skipPast( array $group, int $stackPtr ): int {
-		if ( empty( $group ) ) {
+		if ( $group === [] ) {
 			return $stackPtr + 1;
 		}
 
