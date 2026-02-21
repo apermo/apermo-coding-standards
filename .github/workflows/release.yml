@@ -50,36 +50,6 @@ jobs:
             echo "flag=" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update changelog
-        if: steps.check-tag.outputs.exists == 'false' && steps.prerelease.outputs.flag == ''
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          TAG="${{ steps.version.outputs.tag }}"
-          TODAY=$(date +%Y-%m-%d)
-          REPO_URL="https://github.com/${{ github.repository }}"
-
-          # Replace "Unreleased" date with today
-          sed -i "s/^## \[${VERSION}\] - Unreleased/## [${VERSION}] - ${TODAY}/" CHANGELOG.md
-
-          # Insert new [Unreleased] section before the release entry
-          sed -i "/^## \[${VERSION}\] - ${TODAY}/i\\
-          ## [Unreleased]\\
-          " CHANGELOG.md
-
-          # Rename [Unreleased] link → version link, replace HEAD → tag
-          sed -i "s|^\[Unreleased\]: \(.*\)/compare/\(.*\)\.\.\.HEAD|[${VERSION}]: \1/compare/\2...${TAG}|" CHANGELOG.md
-
-          # Add new [Unreleased] link pointing to HEAD
-          sed -i "/^\[${VERSION}\]:/i\\[Unreleased]: ${REPO_URL}/compare/${TAG}...HEAD" CHANGELOG.md
-
-      - name: Commit changelog
-        if: steps.check-tag.outputs.exists == 'false' && steps.prerelease.outputs.flag == ''
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
-          git diff --staged --quiet || (git commit -m "docs(changelog): set release date for ${{ steps.version.outputs.tag }}" && git push)
-
       - name: Extract changelog notes
         if: steps.check-tag.outputs.exists == 'false'
         id: changelog
