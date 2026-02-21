@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Release-published workflow now finds the merged PR by
-  branch name (`release/$VERSION`) instead of search query.
+- Release and release-published workflows now find the
+  merged PR by branch name (`release/$VERSION`) instead
+  of SHA or tag search queries.
 
 ## [2.0.1] - 2026-02-21
 
