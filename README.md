@@ -553,6 +553,24 @@ Place custom sniffs in `Apermo/Sniffs/<Category>/<SniffName>Sniff.php`. PHPCS di
 
 Example: `Apermo/Sniffs/Naming/FunctionPrefixSniff.php` is referenced as `Apermo.Naming.FunctionPrefix`.
 
+## Contributing
+
+### Development
+
+```bash
+composer install       # Install dependencies
+composer test          # Run PHPUnit tests
+composer analyse       # Run PHPStan static analysis
+```
+
+### Release Process
+
+1. Create a `release/X.Y.Z` branch from `main`
+2. Update `CHANGELOG.md` with the version heading and release date
+3. Open a PR — CI runs tests, PHPStan, and validates the changelog
+4. Merge the PR — GitHub Actions creates a draft release with the tag
+5. Review and publish the draft release on GitHub
+
 ## License
 
 [MIT](LICENSE)

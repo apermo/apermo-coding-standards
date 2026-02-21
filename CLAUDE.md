@@ -72,6 +72,18 @@ Each test has a minimal `.inc` fixture in `tests/Integration/Fixtures/` and a co
 
 ## Releasing
 
-1. Commit changes, push to `main`
-2. Tag a release: `git tag v1.0.0 && git push --tags`
-3. Consumer projects update via `composer update apermo/apermo-coding-standards`
+Releases are managed via `release/*` branches and GitHub Actions.
+
+1. Create a `release/X.Y.Z` branch from `main`
+2. Update `CHANGELOG.md`: change `## [Unreleased]` to `## [X.Y.Z] - Unreleased`
+3. Update the compare link at the bottom of CHANGELOG
+4. Open a PR to `main`
+5. Before merging, set the release date: `## [X.Y.Z] - YYYY-MM-DD`
+6. Merge the PR — the release workflow automatically:
+   - Creates a draft GitHub release with tag `vX.Y.Z`
+   - Extracts release notes from CHANGELOG
+   - Cleans up any prerelease tags
+7. Review and publish the draft release on GitHub
+8. Consumer projects update via `composer update apermo/apermo-coding-standards`
+
+Tags use the `v` prefix (`v2.0.0`). Packagist strips it automatically.
