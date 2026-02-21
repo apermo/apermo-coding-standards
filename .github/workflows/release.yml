@@ -19,10 +19,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get version from composer.json
+      - name: Get version from CHANGELOG
         id: version
         run: |
-          VERSION=$(php -r "echo json_decode(file_get_contents('composer.json'))->version;")
+          VERSION=$(sed -n 's/^## \[\([^]]*\)\].*/\1/p' CHANGELOG.md | head -1)
+          if [ -z "$VERSION" ]; then
+            echo "::error::No version heading found in CHANGELOG.md"
+            exit 1
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
@@ -35,6 +39,47 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Detect prerelease version
+        if: steps.check-tag.outputs.exists == 'false'
+        id: prerelease
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ "$VERSION" == *-* ]]; then
+            echo "flag=--prerelease" >> $GITHUB_OUTPUT
+          else
+            echo "flag=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update changelog
+        if: steps.check-tag.outputs.exists == 'false' && steps.prerelease.outputs.flag == ''
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+          TODAY=$(date +%Y-%m-%d)
+          REPO_URL="https://github.com/${{ github.repository }}"
+
+          # Replace "Unreleased" date with today
+          sed -i "s/^## \[${VERSION}\] - Unreleased/## [${VERSION}] - ${TODAY}/" CHANGELOG.md
+
+          # Insert new [Unreleased] section before the release entry
+          sed -i "/^## \[${VERSION}\] - ${TODAY}/i\\
+          ## [Unreleased]\\
+          " CHANGELOG.md
+
+          # Rename [Unreleased] link → version link, replace HEAD → tag
+          sed -i "s|^\[Unreleased\]: \(.*\)/compare/\(.*\)\.\.\.HEAD|[${VERSION}]: \1/compare/\2...${TAG}|" CHANGELOG.md
+
+          # Add new [Unreleased] link pointing to HEAD
+          sed -i "/^\[${VERSION}\]:/i\\[Unreleased]: ${REPO_URL}/compare/${TAG}...HEAD" CHANGELOG.md
+
+      - name: Commit changelog
+        if: steps.check-tag.outputs.exists == 'false' && steps.prerelease.outputs.flag == ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git diff --staged --quiet || (git commit -m "docs(changelog): set release date for ${{ steps.version.outputs.tag }}" && git push)
+
       - name: Extract changelog notes
         if: steps.check-tag.outputs.exists == 'false'
         id: changelog
@@ -42,6 +87,17 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} /^## \[/{if(found) exit} found" CHANGELOG.md)
           echo "$NOTES" > release_notes.md
+
+      - name: Delete prerelease artifacts
+        if: steps.check-tag.outputs.exists == 'false' && steps.prerelease.outputs.flag == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          for tag in $(git tag -l "v${VERSION}-*"); do
+            gh release delete "$tag" --yes 2>/dev/null || true
+            git push --delete origin "$tag" 2>/dev/null || true
+          done
 
       - name: Create draft release
         if: steps.check-tag.outputs.exists == 'false'
@@ -54,6 +110,7 @@ jobs:
             --title "$TAG" \
             --notes-file release_notes.md \
             --draft \
+            ${{ steps.prerelease.outputs.flag }} \
             --target $(git rev-parse HEAD))
           echo "url=$RELEASE_URL" >> $GITHUB_OUTPUT
 

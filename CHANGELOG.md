@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.0] - Unreleased
 
+### Added
+
+- GitHub Actions: prerelease workflow for `release/*`
+  branches via `workflow_dispatch`.
+- Release and PR validation workflows now derive version
+  from CHANGELOG headings instead of `composer.json`.
+
+### Changed
+
+- Removed `version` field from `composer.json`. Packagist
+  derives versions from git tags exclusively.
+
 ## [1.4.0] - 2026-02-20
 
 ### Added
