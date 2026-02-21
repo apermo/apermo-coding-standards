@@ -1,6 +1,10 @@
 # Apermo WordPress Coding Standards
 
 [![CI](https://github.com/apermo/apermo-coding-standards/actions/workflows/ci.yml/badge.svg)](https://github.com/apermo/apermo-coding-standards/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/apermo/apermo-coding-standards/graph/badge.svg)](https://codecov.io/gh/apermo/apermo-coding-standards)
+[![Packagist Version](https://img.shields.io/packagist/v/apermo/apermo-coding-standards)](https://packagist.org/packages/apermo/apermo-coding-standards)
+[![PHP Version](https://img.shields.io/packagist/dependency-v/apermo/apermo-coding-standards/php)](https://packagist.org/packages/apermo/apermo-coding-standards)
+[![License](https://img.shields.io/packagist/l/apermo/apermo-coding-standards)](LICENSE)
 
 Shared [PHPCS](https://github.com/PHPCSStandards/PHP_CodeSniffer) ruleset for WordPress projects. Combines WordPress Coding Standards, Slevomat type hints, YoastCS, and PHPCompatibility into a single reusable standard.
 
@@ -9,19 +13,6 @@ Shared [PHPCS](https://github.com/PHPCSStandards/PHP_CodeSniffer) ruleset for Wo
 - PHP 8.3+
 
 ## Installation
-
-Add the GitHub repository and require the package:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/apermo/apermo-coding-standards"
-        }
-    ]
-}
-```
 
 ```bash
 composer require --dev apermo/apermo-coding-standards
@@ -77,6 +68,40 @@ vendor/bin/phpcs
 - `stdClass` usage discouraged — `new \stdClass()` and `(object)` casts warned
 - Hook invocations (`do_action`, `apply_filters`) require PHPDoc blocks
 - Assignment alignment must be consistent within groups (all aligned or all single-space)
+- Nested closures and arrow functions are warned
+
+### Forbidden Nested Closures (`Apermo.Functions.ForbiddenNestedClosure`)
+
+Closures and arrow functions nested inside other closures or arrow functions are warned. Extract the inner callback to a named function instead.
+
+```php
+// Bad — nested closures
+$fn = function () {
+    $inner = function () {
+        return 1;
+    };
+};
+
+// Bad — nested arrow functions
+$fn = fn() => fn() => 1;
+
+// Good — extract to named function
+function get_one(): int {
+    return 1;
+}
+$fn = function () {
+    $inner = get_one();
+};
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Disable entirely -->
+<rule ref="Apermo.Functions.ForbiddenNestedClosure.NestedClosure">
+    <severity>0</severity>
+</rule>
+```
 
 ### Commented-Out Code (`Apermo.PHP.ExplainCommentedOutCode`)
 
@@ -401,7 +426,9 @@ apply_filters( 'my_title', $title );
 
 ### Consistent Assignment Alignment (`Apermo.Formatting.ConsistentAssignmentAlignment`)
 
-Consecutive assignment statements must use a consistent style: either all `=` operators are aligned to the same column, or all use a single space before `=`. Mixing styles within a group is warned.
+Consecutive assignment statements must use a consistent style: either all `=` operators are aligned to the same column, or all use a single space before `=`. Mixing styles within a group is warned. Auto-fixable with `phpcbf` — deviators are adjusted to match the majority style.
+
+Groups where all operators are aligned but padded beyond the longest variable + 1 space are flagged as `OverAligned` errors (not auto-fixable).
 
 A group of assignments breaks on: blank lines, non-assignment statements, or EOF.
 
@@ -418,24 +445,36 @@ $a   = 1;
 $bb  = 2;
 $ccc = 3;
 
-// Warning — mixed styles
+// Warning (fixable) — mixed styles
 $short = 1;
 $veryLongName = 2;
 $x            = 3;
+
+// Error — over-aligned
+$short     = 1;
+$medium    = 2;
+$long      = 3;
 ```
 
 **Customization** via `phpcs.xml`:
 
 ```xml
-<!-- Disable entirely -->
+<!-- Disable inconsistency warnings -->
 <rule ref="Apermo.Formatting.ConsistentAssignmentAlignment.InconsistentAlignment">
+    <severity>0</severity>
+</rule>
+
+<!-- Disable over-alignment errors -->
+<rule ref="Apermo.Formatting.ConsistentAssignmentAlignment.OverAligned">
     <severity>0</severity>
 </rule>
 ```
 
 ### Consistent Double Arrow Alignment (`Apermo.Arrays.ConsistentDoubleArrowAlignment`)
 
-Multi-line associative arrays must use a consistent `=>` style: either all arrows are aligned to the same column, or all use a single space before `=>`. Mixing styles within an array is warned.
+Multi-line associative arrays must use a consistent `=>` style: either all arrows are aligned to the same column, or all use a single space before `=>`. Mixing styles within an array is warned. Auto-fixable with `phpcbf` — deviators are adjusted to match the majority style.
+
+Arrays where all arrows are aligned but padded beyond the longest key + 1 space are flagged as `OverAligned` errors (not auto-fixable).
 
 Only outermost arrays are checked — nested sub-arrays are analyzed independently. Single-line arrays are skipped.
 
@@ -456,20 +495,32 @@ $config = [
     'database' => 'mydb',
 ];
 
-// Warning — mixed styles
+// Warning (fixable) — mixed styles
 $config = [
     'host' => 'localhost',
     'port' => 3306,
     'database_name' => 'mydb',
     'x'             => 'value',
 ];
+
+// Error — over-aligned
+$config = [
+    'a'      => 1,
+    'bb'     => 2,
+    'ccc'    => 3,
+];
 ```
 
 **Customization** via `phpcs.xml`:
 
 ```xml
-<!-- Disable entirely -->
+<!-- Disable inconsistency warnings -->
 <rule ref="Apermo.Arrays.ConsistentDoubleArrowAlignment.InconsistentAlignment">
+    <severity>0</severity>
+</rule>
+
+<!-- Disable over-alignment errors -->
+<rule ref="Apermo.Arrays.ConsistentDoubleArrowAlignment.OverAligned">
     <severity>0</severity>
 </rule>
 ```

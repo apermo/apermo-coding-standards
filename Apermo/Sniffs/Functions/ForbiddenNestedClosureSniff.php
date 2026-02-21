@@ -20,7 +20,7 @@ class ForbiddenNestedClosureSniff implements Sniff {
 	/**
 	 * Returns an array of tokens this sniff listens for.
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	public function register(): array {
 		return [ T_CLOSURE, T_FN ];

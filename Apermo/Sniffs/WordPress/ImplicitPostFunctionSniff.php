@@ -191,8 +191,8 @@ class ImplicitPostFunctionSniff extends AbstractPostContextSniff {
 	/**
 	 * Classifies a passed argument as null, integer, or ok.
 	 *
-	 * @param File  $phpcsFile The file being scanned.
-	 * @param array $param     Parameter info from PassedParameters.
+	 * @param File                              $phpcsFile The file being scanned.
+	 * @param array{start: int, end: int, raw: string} $param     Parameter info from PassedParameters.
 	 *
 	 * @return string 'null'|'integer'|'ok'
 	 */

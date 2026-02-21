@@ -54,7 +54,7 @@ class ArrayComplexitySniff implements Sniff {
 	/**
 	 * Returns an array of tokens this sniff listens for.
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	public function register() {
 		return [ T_OPEN_SHORT_ARRAY, T_ARRAY ];
@@ -98,11 +98,11 @@ class ArrayComplexitySniff implements Sniff {
 	 * Walks tokens between opener and closer in a single pass, tracking
 	 * depth and whether each level is associative (contains T_DOUBLE_ARROW).
 	 *
-	 * @param File  $phpcsFile The file being scanned.
-	 * @param int   $stackPtr  The position of the array token (for reporting).
-	 * @param array $tokens    Token stack.
-	 * @param int   $opener    Position of the array opener.
-	 * @param int   $closer    Position of the array closer.
+	 * @param File                    $phpcsFile The file being scanned.
+	 * @param int                     $stackPtr  The position of the array token (for reporting).
+	 * @param array<int, array<mixed>> $tokens    Token stack.
+	 * @param int                     $opener    Position of the array opener.
+	 * @param int                     $closer    Position of the array closer.
 	 */
 	private function analyze( File $phpcsFile, int $stackPtr, array $tokens, int $opener, int $closer ): void {
 		$depth         = 1;
