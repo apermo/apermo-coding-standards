@@ -139,7 +139,7 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 		$group   = [];
 		$current = $stackPtr;
 
-		while ( $current !== false && $current < $phpcsFile->numTokens ) {
+		while ( $current < $phpcsFile->numTokens ) {
 			$spaces = $this->measureSpacesBefore( $phpcsFile, $current );
 			$line   = $tokens[ $current ]['line'];
 			$column = $tokens[ $current ]['column'];
@@ -187,7 +187,8 @@ class ConsistentAssignmentAlignmentSniff implements Sniff {
 
 		// Find the first non-whitespace token on the next line.
 		$found = false;
-		for ( $i = $currentPtr + 1; $i < $phpcsFile->numTokens; $i++ ) {
+		$i     = $currentPtr + 1;
+		for ( ; $i < $phpcsFile->numTokens; $i++ ) {
 			if ( $tokens[ $i ]['line'] < $nextLine ) {
 				continue;
 			}

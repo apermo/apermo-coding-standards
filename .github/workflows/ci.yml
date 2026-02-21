@@ -50,3 +50,30 @@ jobs:
         with:
           files: coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-phpstan-${{ hashFiles('composer.json') }}
+          restore-keys: composer-phpstan-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        run: composer analyse

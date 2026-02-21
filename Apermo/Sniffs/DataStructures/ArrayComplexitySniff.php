@@ -54,7 +54,7 @@ class ArrayComplexitySniff implements Sniff {
 	/**
 	 * Returns an array of tokens this sniff listens for.
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	public function register() {
 		return [ T_OPEN_SHORT_ARRAY, T_ARRAY ];

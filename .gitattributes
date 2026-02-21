@@ -5,6 +5,7 @@
 /.phpunit.cache/    export-ignore
 /Apermo/Tests/      export-ignore
 /tests/             export-ignore
+/phpstan.neon       export-ignore
 /phpunit.xml        export-ignore
 CHANGELOG.md        export-ignore
 CLAUDE.md           export-ignore

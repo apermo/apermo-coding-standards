@@ -1,0 +1,15 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 5
+    paths:
+        - Apermo/Sniffs
+    scanDirectories:
+        - vendor/squizlabs/php_codesniffer/src
+        - vendor/phpcsstandards/phpcsutils/PHPCSUtils
+    strictRules:
+        allRules: false
+        booleansInConditions: true
+        disallowedLooseComparison: true
+        strictFunctionCalls: true
