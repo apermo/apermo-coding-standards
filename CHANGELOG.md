@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Release workflow now finds the merged PR by branch
   name (`release/$VERSION`) instead of SHA search.
+- `RequireHookDocBlock`: empty `array ( )` with
+  whitespace no longer triggers a false MissingParam
+  warning in `_ref_array` and `_deprecated` variants.
+
+### Tests
+
+- `ArrayComplexity`: cover function calls inside arrays
+  and numeric arrays nested in associative arrays.
+- `MultipleEmptyLines`: cover `$stackPtr < 2` guard
+  and `findNext()` returning false at EOF.
+- `ImplicitPostFunction`: cover non-ID property access
+  patterns (`$post->name`, `$post->id`).
 
 ## [2.0.1] - 2026-02-21
 
