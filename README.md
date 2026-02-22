@@ -571,9 +571,12 @@ composer analyse       # Run PHPStan static analysis
 4. Merge the PR — GitHub Actions creates a draft release with the tag
 5. Review and publish the draft release on GitHub
 
-## Disclaimer
+## AI Disclaimer
 
-This project is developed with major assistance from AI tooling. Projects with stricter rules regarding the use of AI-generated code should refrain from forking or reusing code from this repository.
+This project is developed with major assistance from [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (Anthropic). 
+Claude handles the bulk of the implementation — writing sniffs, tests, fixtures, CI workflows, and documentation — while 
+the maintainer reviews, steers, and makes final decisions. Projects with stricter rules regarding the use of AI-generated 
+code should refrain from forking or reusing code from this repository.
 
 ## License
 
