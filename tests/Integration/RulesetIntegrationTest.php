@@ -211,4 +211,12 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertErrorOnLine( $file, 7, 'ConcatPosition', 'Concat at end of line should be flagged.' );
 		$this->assertNoErrorsOnLine( $file, 12, 'Concat at start of line should be allowed.' );
 	}
+
+	public function testLogicalAndOrDisallowed(): void {
+		$file = $this->processFixture( 'LogicalOperators.inc' );
+		$this->assertErrorOnLine( $file, 4, 'DisallowLogicalAndOr', '"and" should be flagged.' );
+		$this->assertErrorOnLine( $file, 6, 'DisallowLogicalAndOr', '"or" should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 8, '&& should be allowed.' );
+		$this->assertNoErrorsOnLine( $file, 10, '|| should be allowed.' );
+	}
 }
