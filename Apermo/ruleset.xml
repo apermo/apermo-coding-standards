@@ -47,6 +47,19 @@
 		<exclude name="Yoast.Commenting.FileComment.CopyrightTagOrder"/>
 	</rule>
 
+	<!--
+		Text domain validation (WordPress.WP.I18n) is active via the WordPress ruleset.
+		Configure your project's text domain in your phpcs.xml:
+
+		<rule ref="WordPress.WP.I18n">
+			<properties>
+				<property name="text_domain" type="array">
+					<element value="my-plugin"/>
+				</property>
+			</properties>
+		</rule>
+	-->
+
 	<!-- Superseded by Apermo.PHP.RequireNotInclude. -->
 	<rule ref="PEAR.Files.IncludingFile.UseRequire">
 		<severity>0</severity>

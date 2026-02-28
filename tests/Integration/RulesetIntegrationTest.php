@@ -25,23 +25,25 @@ class RulesetIntegrationTest extends TestCase {
 
 	private static string $fixtures_dir;
 
+	private static string $installed_paths;
+
 	public static function setUpBeforeClass(): void {
 		self::$fixtures_dir = __DIR__ . '/Fixtures/';
 
 		// Read installed_paths directly from CodeSniffer.conf because ConfigDouble
 		// (used by unit tests) clears the static config data cache.
 		$config_file = dirname( __DIR__, 2 ) . '/vendor/squizlabs/php_codesniffer/CodeSniffer.conf';
-		$installed_paths = '';
+		self::$installed_paths = '';
 		if ( file_exists( $config_file ) ) {
 			include $config_file;
-			$installed_paths = $phpCodeSnifferConfig['installed_paths'] ?? '';
+			self::$installed_paths = $phpCodeSnifferConfig['installed_paths'] ?? '';
 		}
 
 		self::$config = new ConfigDouble( [
 			'--standard=Apermo',
 			'--runtime-set',
 			'installed_paths',
-			$installed_paths,
+			self::$installed_paths,
 		] );
 
 		self::$ruleset = new Ruleset( self::$config );
@@ -210,6 +212,29 @@ class RulesetIntegrationTest extends TestCase {
 		$file = $this->processFixture( 'ConcatPosition.inc' );
 		$this->assertErrorOnLine( $file, 7, 'ConcatPosition', 'Concat at end of line should be flagged.' );
 		$this->assertNoErrorsOnLine( $file, 12, 'Concat at start of line should be allowed.' );
+	}
+
+	public function testTextDomainValidation(): void {
+		$config = new ConfigDouble( [
+			'--standard=Apermo',
+			'--runtime-set',
+			'installed_paths',
+			self::$installed_paths,
+			'--runtime-set',
+			'text_domain',
+			'test-domain',
+		] );
+
+		$ruleset = new Ruleset( $config );
+		$file    = new LocalFile(
+			self::$fixtures_dir . 'TextDomain.inc',
+			$ruleset,
+			$config,
+		);
+		$file->process();
+
+		$this->assertErrorOnLine( $file, 5, 'TextDomainMismatch', 'Wrong text domain should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 7, 'Correct text domain should be allowed.' );
 	}
 
 	public function testMinimumVariableNameLength(): void {
