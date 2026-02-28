@@ -55,6 +55,14 @@
 		<severity>0</severity>
 	</rule>
 
+	<!-- Flag overly complex methods by cognitive complexity score. -->
+	<rule ref="SlevomatCodingStandard.Complexity.Cognitive">
+		<properties>
+			<property name="warningThreshold" value="15"/>
+			<property name="errorThreshold" value="30"/>
+		</properties>
+	</rule>
+
 	<!-- Disallow implicit array creation via $a[] = or $a['key'] = on undefined variable. -->
 	<rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
 

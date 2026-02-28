@@ -212,6 +212,12 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoErrorsOnLine( $file, 12, 'Concat at start of line should be allowed.' );
 	}
 
+	public function testCognitiveComplexity(): void {
+		$file = $this->processFixture( 'CognitiveComplexity.inc' );
+		$this->assertNoErrorsOnLine( $file, 8, 'Simple function should pass.' );
+		$this->assertErrorOnLine( $file, 13, 'Cognitive', 'Complex function should be flagged.' );
+	}
+
 	public function testDisallowImplicitArrayCreation(): void {
 		$file = $this->processFixture( 'ImplicitArrayCreation.inc' );
 		$this->assertErrorOnLine( $file, 9, 'DisallowImplicitArrayCreation', 'Implicit array creation should be flagged.' );
