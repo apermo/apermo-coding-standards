@@ -32,7 +32,7 @@ class PreferWpdbIdentifierPlaceholderSniff implements Sniff {
 	/**
 	 * Returns an array of tokens this sniff listens for.
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	public function register() {
 		return [ T_CONSTANT_ENCAPSED_STRING, T_DOUBLE_QUOTED_STRING ];

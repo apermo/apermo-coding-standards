@@ -32,7 +32,7 @@ class ExcessiveParameterCountSniff implements Sniff {
 	/**
 	 * Returns an array of tokens this sniff listens for.
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	public function register() {
 		return [ T_FUNCTION, T_CLOSURE, T_FN ];

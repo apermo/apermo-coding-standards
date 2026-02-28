@@ -54,7 +54,7 @@ class NoHardcodedTableNamesSniff implements Sniff {
 	/**
 	 * Returns an array of tokens this sniff listens for.
 	 *
-	 * @return array<int>
+	 * @return array<int|string>
 	 */
 	public function register() {
 		$names         = implode( '|', self::TABLE_NAMES );
