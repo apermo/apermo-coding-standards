@@ -341,6 +341,11 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoErrorsOnLine( $file, 10, 'FILTER_SANITIZE_EMAIL should be allowed.' );
 	}
 
+	public function testNoQueryPosts(): void {
+		$file = $this->processFixture( 'NoQueryPosts.inc' );
+		$this->assertErrorOnLine( $file, 5, 'NoQueryPosts', 'query_posts() should be flagged.' );
+	}
+
 	public function testRequireOptionAutoload(): void {
 		$file = $this->processFixture( 'OptionAutoload.inc' );
 		$this->assertWarningOnLine( $file, 7, 'RequireOptionAutoload', 'add_option without autoload should warn.' );
