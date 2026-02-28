@@ -212,6 +212,13 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoErrorsOnLine( $file, 12, 'Concat at start of line should be allowed.' );
 	}
 
+	public function testMinimumVariableNameLength(): void {
+		$file = $this->processFixture( 'VariableNameLength.inc' );
+		$this->assertWarningOnLine( $file, 6, 'MinimumVariableNameLength', 'Short variable should warn.' );
+		$this->assertNoWarningsOnLine( $file, 8, 'Allowed short name should pass.' );
+		$this->assertNoWarningsOnLine( $file, 10, 'Long enough name should pass.' );
+	}
+
 	public function testExitUsage(): void {
 		$file = $this->processFixture( 'ExitUsage.inc' );
 		$this->assertErrorOnLine( $file, 7, 'ExitUsage', 'die should be flagged.' );
