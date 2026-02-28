@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Flag WordPress functions that implicitly access global $post.
  *

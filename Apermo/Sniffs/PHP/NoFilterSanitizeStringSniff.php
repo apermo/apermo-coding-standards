@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Flag deprecated FILTER_SANITIZE_STRING usage.
  *

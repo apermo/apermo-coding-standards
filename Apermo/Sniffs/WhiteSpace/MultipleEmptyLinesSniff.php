@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Disallow multiple consecutive empty lines outside functions.
  *
