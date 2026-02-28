@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Unit test for the RequireRestPermissionCallback sniff.
  *
@@ -26,7 +28,8 @@ class RequireRestPermissionCallbackUnitTest extends AbstractSniffUnitTest {
 			8  => 1, // No args at all.
 			11 => 1, // Short array without permission_callback.
 			28 => 1, // array() without permission_callback.
-			49 => 1, // Nested route arrays without permission_callback.
+			49 => 1, // Nested route arrays, none with permission_callback.
+			61 => 1, // Mixed nested routes, one missing permission_callback.
 		];
 	}
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Require PHPDoc blocks before WordPress hook invocations.
  *
@@ -7,6 +9,7 @@
 
 namespace Apermo\Sniffs\Hooks;
 
+use Apermo\Sniffs\Helpers\FunctionCallDetectorTrait;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHPCSUtils\Utils\PassedParameters;
@@ -17,6 +20,8 @@ use PHPCSUtils\Utils\PassedParameters;
  * for filters, the expected return value.
  */
 class RequireHookDocBlockSniff implements Sniff {
+
+	use FunctionCallDetectorTrait;
 
 	/**
 	 * Hook functions to check.
@@ -76,40 +81,6 @@ class RequireHookDocBlockSniff implements Sniff {
 		}
 
 		$this->validateDocBlock( $phpcsFile, $stackPtr, $docBlock, $hookType, $funcName );
-	}
-
-	/**
-	 * Checks whether a T_STRING token is a genuine function call.
-	 *
-	 * @param File $phpcsFile The file being scanned.
-	 * @param int  $stackPtr  The position of the T_STRING token.
-	 *
-	 * @return bool
-	 */
-	private function isFunctionCall( File $phpcsFile, int $stackPtr ): bool {
-		$tokens = $phpcsFile->getTokens();
-
-		$next = $phpcsFile->findNext( T_WHITESPACE, $stackPtr + 1, null, true );
-		if ( $next === false || $tokens[ $next ]['code'] !== T_OPEN_PARENTHESIS ) {
-			return false;
-		}
-
-		$prev = $phpcsFile->findPrevious( T_WHITESPACE, $stackPtr - 1, null, true );
-		if ( $prev === false ) {
-			return true;
-		}
-
-		$prevCode = $tokens[ $prev ]['code'];
-
-		if ( in_array( $prevCode, [ T_OBJECT_OPERATOR, T_DOUBLE_COLON, T_NULLSAFE_OBJECT_OPERATOR ], true ) ) {
-			return false;
-		}
-
-		if ( $prevCode === T_FUNCTION ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	/**

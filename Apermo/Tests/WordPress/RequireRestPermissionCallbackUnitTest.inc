@@ -57,6 +57,33 @@ register_rest_route( 'myplugin/v1', '/items', [
 	],
 ] );
 
+// ERROR: mixed nested routes — one has permission_callback, one does not.
+register_rest_route( 'myplugin/v1', '/items', [
+	[
+		'methods'             => 'GET',
+		'callback'            => 'get_items',
+		'permission_callback' => '__return_true',
+	],
+	[
+		'methods'  => 'POST',
+		'callback' => 'create_item',
+	],
+] );
+
+// OK: nested routes where all have permission_callback.
+register_rest_route( 'myplugin/v1', '/items', [
+	[
+		'methods'             => 'GET',
+		'callback'            => 'get_items',
+		'permission_callback' => '__return_true',
+	],
+	[
+		'methods'             => 'POST',
+		'callback'            => 'create_item',
+		'permission_callback' => 'can_create',
+	],
+] );
+
 // OK: function call result as args.
 register_rest_route( 'myplugin/v1', '/items', build_args() );
 

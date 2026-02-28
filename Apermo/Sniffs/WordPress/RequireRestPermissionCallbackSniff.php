@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Require permission_callback in register_rest_route() calls.
  *
@@ -7,6 +9,7 @@
 
 namespace Apermo\Sniffs\WordPress;
 
+use Apermo\Sniffs\Helpers\FunctionCallDetectorTrait;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHPCSUtils\Utils\PassedParameters;
@@ -19,9 +22,12 @@ use PHPCSUtils\Utils\PassedParameters;
  * endpoints default to public access when omitted.
  *
  * Error codes:
- * - Missing: no permission_callback key found in the args array
+ * - MissingArgs: no route arguments parameter provided at all
+ * - Missing:     args present but no permission_callback key found
  */
 class RequireRestPermissionCallbackSniff implements Sniff {
+
+	use FunctionCallDetectorTrait;
 
 	/**
 	 * Returns an array of tokens this sniff listens for.
@@ -61,7 +67,7 @@ class RequireRestPermissionCallbackSniff implements Sniff {
 			$phpcsFile->addError(
 				'register_rest_route() called without route arguments; include a permission_callback',
 				$stackPtr,
-				'Missing',
+				'MissingArgs',
 			);
 			return;
 		}
@@ -78,46 +84,11 @@ class RequireRestPermissionCallbackSniff implements Sniff {
 	}
 
 	/**
-	 * Checks whether a T_STRING token is a genuine function call.
-	 *
-	 * @param File $phpcsFile The file being scanned.
-	 * @param int  $stackPtr  The position of the T_STRING token.
-	 *
-	 * @return bool
-	 */
-	private function isFunctionCall( File $phpcsFile, int $stackPtr ): bool {
-		$tokens = $phpcsFile->getTokens();
-
-		$next = $phpcsFile->findNext( T_WHITESPACE, $stackPtr + 1, null, true );
-		if ( $next === false || $tokens[ $next ]['code'] !== T_OPEN_PARENTHESIS ) {
-			return false;
-		}
-
-		$prev = $phpcsFile->findPrevious( T_WHITESPACE, $stackPtr - 1, null, true );
-		if ( $prev === false ) {
-			return true;
-		}
-
-		$prevCode = $tokens[ $prev ]['code'];
-
-		if ( in_array( $prevCode, [ T_OBJECT_OPERATOR, T_DOUBLE_COLON, T_NULLSAFE_OBJECT_OPERATOR ], true ) ) {
-			return false;
-		}
-
-		if ( $prevCode === T_FUNCTION ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	 * Check if the args parameter contains a 'permission_callback' key.
 	 *
-	 * Scans the token range of the args parameter for the string
-	 * 'permission_callback' used as an array key (followed by =>).
-	 * Non-literal args (variables, function calls) are assumed
-	 * correct since they cannot be verified statically.
+	 * Handles both single route definitions and nested multi-route arrays.
+	 * For nested arrays, every sub-array must contain the key.
+	 * Non-literal args (variables, function calls) are assumed correct.
 	 *
 	 * @param File                                    $phpcsFile The file being scanned.
 	 * @param array{start: int, end: int, raw: string} $param     Parameter info from PassedParameters.
@@ -127,14 +98,87 @@ class RequireRestPermissionCallbackSniff implements Sniff {
 	private function containsPermissionCallback( File $phpcsFile, array $param ): bool {
 		$tokens = $phpcsFile->getTokens();
 
-		// If the arg is a variable or function call, we can't statically
-		// verify the contents — give the benefit of the doubt.
 		if ( ! $this->isArrayLiteral( $phpcsFile, $param ) ) {
 			return true;
 		}
 
-		// Scan tokens in the args range for 'permission_callback' => ...
-		for ( $i = $param['start']; $i <= $param['end']; $i++ ) {
+		$bounds = $this->getArrayBounds( $phpcsFile, $param );
+		if ( $bounds === null ) {
+			return false;
+		}
+
+		[ $opener, $closer ] = $bounds;
+
+		// Check if nested: first element inside the outer array is itself an array.
+		$firstElement = $phpcsFile->findNext( T_WHITESPACE, $opener + 1, $closer, true );
+		if ( $firstElement !== false
+			&& in_array( $tokens[ $firstElement ]['code'], [ T_OPEN_SHORT_ARRAY, T_ARRAY ], true )
+		) {
+			return $this->allNestedRoutesHaveCallback( $phpcsFile, $opener, $closer );
+		}
+
+		return $this->scanForPermissionCallback( $phpcsFile, $param['start'], $param['end'] );
+	}
+
+	/**
+	 * Check that every inner array in a nested route definition has permission_callback.
+	 *
+	 * @param File $phpcsFile The file being scanned.
+	 * @param int  $opener    The outer array opener token position.
+	 * @param int  $closer    The outer array closer token position.
+	 *
+	 * @return bool True only if every inner array contains the key.
+	 */
+	private function allNestedRoutesHaveCallback( File $phpcsFile, int $opener, int $closer ): bool {
+		$tokens = $phpcsFile->getTokens();
+		$pos    = $opener + 1;
+
+		while ( $pos < $closer ) {
+			$next = $phpcsFile->findNext( T_WHITESPACE, $pos, $closer, true );
+			if ( $next === false ) {
+				break;
+			}
+
+			if ( $tokens[ $next ]['code'] === T_OPEN_SHORT_ARRAY ) {
+				$innerCloser = $tokens[ $next ]['bracket_closer'];
+				if ( ! $this->scanForPermissionCallback( $phpcsFile, $next, $innerCloser ) ) {
+					return false;
+				}
+
+				$pos = $innerCloser + 1;
+				continue;
+			}
+
+			if ( $tokens[ $next ]['code'] === T_ARRAY ) {
+				$openParen   = $phpcsFile->findNext( T_WHITESPACE, $next + 1, null, true );
+				$innerCloser = $tokens[ $openParen ]['parenthesis_closer'];
+				if ( ! $this->scanForPermissionCallback( $phpcsFile, $next, $innerCloser ) ) {
+					return false;
+				}
+
+				$pos = $innerCloser + 1;
+				continue;
+			}
+
+			$pos = $next + 1;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Scan a token range for 'permission_callback' used as an array key.
+	 *
+	 * @param File $phpcsFile The file being scanned.
+	 * @param int  $start     Start token position.
+	 * @param int  $end       End token position (inclusive).
+	 *
+	 * @return bool
+	 */
+	private function scanForPermissionCallback( File $phpcsFile, int $start, int $end ): bool {
+		$tokens = $phpcsFile->getTokens();
+
+		for ( $i = $start; $i <= $end; $i++ ) {
 			if ( $tokens[ $i ]['code'] !== T_CONSTANT_ENCAPSED_STRING ) {
 				continue;
 			}
@@ -144,14 +188,38 @@ class RequireRestPermissionCallbackSniff implements Sniff {
 				continue;
 			}
 
-			// Verify it's used as an array key (followed by =>).
-			$nextNonWs = $phpcsFile->findNext( T_WHITESPACE, $i + 1, $param['end'] + 1, true );
+			$nextNonWs = $phpcsFile->findNext( T_WHITESPACE, $i + 1, $end + 1, true );
 			if ( $nextNonWs !== false && $tokens[ $nextNonWs ]['code'] === T_DOUBLE_ARROW ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the opener and closer positions of the array in a parameter.
+	 *
+	 * @param File                                    $phpcsFile The file being scanned.
+	 * @param array{start: int, end: int, raw: string} $param     Parameter info.
+	 *
+	 * @return array{int, int}|null [opener, closer] or null if not found.
+	 */
+	private function getArrayBounds( File $phpcsFile, array $param ): ?array {
+		$tokens = $phpcsFile->getTokens();
+
+		for ( $i = $param['start']; $i <= $param['end']; $i++ ) {
+			if ( $tokens[ $i ]['code'] === T_OPEN_SHORT_ARRAY ) {
+				return [ $i, $tokens[ $i ]['bracket_closer'] ];
+			}
+
+			if ( $tokens[ $i ]['code'] === T_ARRAY ) {
+				$openParen = $phpcsFile->findNext( T_WHITESPACE, $i + 1, null, true );
+				return [ $openParen, $tokens[ $openParen ]['parenthesis_closer'] ];
+			}
+		}
+
+		return null;
 	}
 
 	/**
