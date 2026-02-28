@@ -5,14 +5,22 @@
 // phpcs:disable SlevomatCodingStandard.Variables.UnusedVariable
 
 // ERROR: missing permission_callback.
-register_rest_route( 'ns/v1', '/test', [
-	'methods'  => 'GET',
-	'callback' => 'cb',
-] );
+register_rest_route(
+	'ns/v1',
+	'/test',
+	[
+		'methods'  => 'GET',
+		'callback' => 'cb',
+	]
+);
 
 // OK: has permission_callback.
-register_rest_route( 'ns/v1', '/test', [
-	'methods'             => 'GET',
-	'callback'            => 'cb',
-	'permission_callback' => '__return_true',
-] );
+register_rest_route(
+	'ns/v1',
+	'/test',
+	[
+		'methods'             => 'GET',
+		'callback'            => 'cb',
+		'permission_callback' => '__return_true',
+	]
+);

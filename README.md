@@ -82,6 +82,99 @@ vendor/bin/phpcs
 - `null` must be last in union types (`string|null` not `null|string`)
 - `and`/`or` operators disallowed (use `&&`/`||`)
 - Alternative control syntax (`endif`, `endwhile`) disallowed
+- `register_rest_route()` must include `permission_callback`
+- `FILTER_SANITIZE_STRING` and related deprecated constants flagged
+- `add_option()`/`update_option()` must include explicit autoload parameter
+
+### REST Permission Callback (`Apermo.WordPress.RequireRestPermissionCallback`)
+
+Flags `register_rest_route()` calls without a `permission_callback` in the args array. Omitting this callback leaves the endpoint open to unauthenticated access — the #1 REST API security hole.
+
+Only array literal args are checked. Variable or function call args are assumed correct (cannot verify statically).
+
+```php
+// Bad — endpoint is publicly accessible
+register_rest_route( 'myplugin/v1', '/items', [
+    'methods'  => 'GET',
+    'callback' => 'get_items',
+] );
+
+// Good — access is controlled
+register_rest_route( 'myplugin/v1', '/items', [
+    'methods'             => 'GET',
+    'callback'            => 'get_items',
+    'permission_callback' => function () {
+        return current_user_can( 'read' );
+    },
+] );
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Downgrade to warning during migration -->
+<rule ref="Apermo.WordPress.RequireRestPermissionCallback.Missing">
+    <type>warning</type>
+</rule>
+```
+
+### No Filter Sanitize String (`Apermo.PHP.NoFilterSanitizeString`)
+
+Flags deprecated PHP filter constants that give a false sense of security:
+
+| Constant | Deprecated Since | Suggested Replacement |
+|---|---|---|
+| `FILTER_SANITIZE_STRING` | PHP 8.1 | `sanitize_text_field()` |
+| `FILTER_SANITIZE_STRIPPED` | PHP 8.1 | `sanitize_text_field()` |
+| `FILTER_SANITIZE_MAGIC_QUOTES` | PHP 7.4 | `wp_slash()` |
+
+```php
+// Bad — deprecated, never actually sanitized
+$name = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_STRING );
+
+// Good — proper sanitization
+$name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Downgrade to warning -->
+<rule ref="Apermo.PHP.NoFilterSanitizeString.Found">
+    <type>warning</type>
+</rule>
+```
+
+### Require Option Autoload (`Apermo.WordPress.RequireOptionAutoload`)
+
+Warns when `add_option()` or `update_option()` is called without an explicit autoload parameter. The default behavior loads the option on every page request — a common performance footgun for options that are rarely needed.
+
+```php
+// Bad — silently autoloaded on every page load
+add_option( 'my_plugin_log', $data );
+update_option( 'my_plugin_cache', $value );
+
+// Good — explicit autoload control
+add_option( 'my_plugin_log', $data, '', false );
+update_option( 'my_plugin_cache', $value, false );
+
+// Good — using named parameter (PHP 8.0+)
+add_option( 'my_plugin_setting', $val, autoload: true );
+```
+
+**Customization** via `phpcs.xml`:
+
+```xml
+<!-- Upgrade to error -->
+<rule ref="Apermo.WordPress.RequireOptionAutoload.MissingAutoload">
+    <type>error</type>
+</rule>
+
+<!-- Disable entirely -->
+<rule ref="Apermo.WordPress.RequireOptionAutoload.MissingAutoload">
+    <severity>0</severity>
+</rule>
+```
 
 ### Exit Usage (`Apermo.PHP.ExitUsage`)
 
