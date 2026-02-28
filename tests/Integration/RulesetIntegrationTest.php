@@ -346,6 +346,13 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertErrorOnLine( $file, 5, 'NoQueryPosts', 'query_posts() should be flagged.' );
 	}
 
+	public function testPreferModernStringFunctions(): void {
+		$file = $this->processFixture( 'ModernStringFunctions.inc' );
+		$this->assertErrorOnLine( $file, 5, 'PreferModernStringFunctions', 'strpos === false should be flagged.' );
+		$this->assertErrorOnLine( $file, 8, 'PreferModernStringFunctions', 'strpos === 0 should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 11, 'strpos without comparison should be allowed.' );
+	}
+
 	public function testRequireOptionAutoload(): void {
 		$file = $this->processFixture( 'OptionAutoload.inc' );
 		$this->assertWarningOnLine( $file, 7, 'RequireOptionAutoload', 'add_option without autoload should warn.' );
