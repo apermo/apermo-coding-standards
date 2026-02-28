@@ -212,6 +212,12 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoErrorsOnLine( $file, 12, 'Concat at start of line should be allowed.' );
 	}
 
+	public function testAlternativeSyntaxDisallowed(): void {
+		$file = $this->processFixture( 'AlternativeSyntax.inc' );
+		$this->assertErrorOnLine( $file, 5, 'DisallowAlternativeSyntax', 'Alternative if/endif should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 9, 'Standard braces should be allowed.' );
+	}
+
 	public function testLogicalAndOrDisallowed(): void {
 		$file = $this->processFixture( 'LogicalOperators.inc' );
 		$this->assertErrorOnLine( $file, 4, 'DisallowLogicalAndOr', '"and" should be flagged.' );

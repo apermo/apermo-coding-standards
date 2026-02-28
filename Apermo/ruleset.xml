@@ -79,6 +79,9 @@
 	<!-- Disallow 'and'/'or' — use && / || instead. -->
 	<rule ref="Universal.Operators.DisallowLogicalAndOr"/>
 
+	<!-- Disallow alternative control structure syntax (endif, endwhile, etc.). -->
+	<rule ref="Universal.ControlStructures.DisallowAlternativeSyntax"/>
+
 	<!-- Forbid long closures. Use named functions instead. -->
 	<rule ref="Universal.FunctionDeclarations.NoLongClosures">
 		<properties>
