@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> PHPStan"
+composer analyse
+
+echo "==> Tests + coverage"
+vendor/bin/phpunit --coverage-text
