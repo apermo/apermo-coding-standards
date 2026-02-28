@@ -375,6 +375,14 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoWarningsOnLine( $file, 16, 'update_option with autoload should be allowed.' );
 	}
 
+	public function testSapiDependentFeatures(): void {
+		$file = $this->processFixture( 'SapiDependentFeatures.inc' );
+		$this->assertErrorOnLine( $file, 6, 'SapiDependentFeatures', 'INPUT_REQUEST should be an error.' );
+		$this->assertWarningOnLine( $file, 9, 'SapiDependentFeatures', 'INPUT_SERVER should warn.' );
+		$this->assertNoErrorsOnLine( $file, 12, 'INPUT_GET should be allowed.' );
+		$this->assertNoWarningsOnLine( $file, 12, 'INPUT_GET should not warn.' );
+	}
+
 	public function testExcessiveParameterCount(): void {
 		$file = $this->processFixture( 'ExcessiveParameterCount.inc' );
 		$this->assertWarningOnLine( $file, 6, 'ExcessiveParameterCount', '7 params should warn.' );

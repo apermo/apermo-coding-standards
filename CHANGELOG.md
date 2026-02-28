@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `require`/`include` statements with relative paths.
   Use absolute paths (`__DIR__ . '/...'`) for
   predictable file resolution.
+- `Apermo.PHP.SapiDependentFeatures` sniff: errors on
+  `filter_input(INPUT_REQUEST)` (never implemented),
+  warns on `INPUT_SERVER`/`INPUT_ENV` (null on CGI/FPM).
 - `Apermo.CodeQuality.ExcessiveParameterCount` sniff:
   warns on functions with more than 6 parameters.
   Configurable via `maxParameters` property.
