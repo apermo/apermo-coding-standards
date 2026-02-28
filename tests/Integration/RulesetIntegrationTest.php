@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Integration tests for the Apermo PHPCS ruleset.
  *
@@ -325,5 +327,25 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertErrorOnLine( $file, 6, 'DisallowLogicalAndOr', '"or" should be flagged.' );
 		$this->assertNoErrorsOnLine( $file, 8, '&& should be allowed.' );
 		$this->assertNoErrorsOnLine( $file, 10, '|| should be allowed.' );
+	}
+
+	public function testRequireRestPermissionCallback(): void {
+		$file = $this->processFixture( 'RestPermissionCallback.inc' );
+		$this->assertErrorOnLine( $file, 8, 'RequireRestPermissionCallback', 'Missing permission_callback should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 18, 'Route with permission_callback should be allowed.' );
+	}
+
+	public function testNoFilterSanitizeString(): void {
+		$file = $this->processFixture( 'FilterSanitizeString.inc' );
+		$this->assertErrorOnLine( $file, 7, 'NoFilterSanitizeString', 'FILTER_SANITIZE_STRING should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 10, 'FILTER_SANITIZE_EMAIL should be allowed.' );
+	}
+
+	public function testRequireOptionAutoload(): void {
+		$file = $this->processFixture( 'OptionAutoload.inc' );
+		$this->assertWarningOnLine( $file, 7, 'RequireOptionAutoload', 'add_option without autoload should warn.' );
+		$this->assertWarningOnLine( $file, 13, 'RequireOptionAutoload', 'update_option without autoload should warn.' );
+		$this->assertNoWarningsOnLine( $file, 10, 'add_option with autoload should be allowed.' );
+		$this->assertNoWarningsOnLine( $file, 16, 'update_option with autoload should be allowed.' );
 	}
 }

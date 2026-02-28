@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Require explained doc-blocks before commented-out code.
  *

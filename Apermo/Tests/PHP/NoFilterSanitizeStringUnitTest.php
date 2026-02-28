@@ -2,19 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Unit test for the ArrayComplexity sniff.
+ * Unit test for the NoFilterSanitizeString sniff.
  *
- * @package Apermo\Tests\DataStructures
+ * @package Apermo\Tests\PHP
  */
 
-namespace Apermo\Tests\DataStructures;
+namespace Apermo\Tests\PHP;
 
 use PHP_CodeSniffer\Tests\Standards\AbstractSniffUnitTest;
 
 /**
- * Unit test for Apermo.DataStructures.ArrayComplexity.
+ * Unit test for Apermo.PHP.NoFilterSanitizeString.
  */
-class ArrayComplexityUnitTest extends AbstractSniffUnitTest {
+class NoFilterSanitizeStringUnitTest extends AbstractSniffUnitTest {
 
 	/**
 	 * Returns the lines where errors should occur.
@@ -25,8 +25,9 @@ class ArrayComplexityUnitTest extends AbstractSniffUnitTest {
 	 */
 	protected function getErrorList( $testFile = '' ) {
 		return [
-			15 => 1,
-			28 => 1,
+			7  => 1, // FILTER_SANITIZE_STRING
+			10 => 1, // FILTER_SANITIZE_STRIPPED
+			13 => 1, // FILTER_SANITIZE_MAGIC_QUOTES
 		];
 	}
 
@@ -38,11 +39,6 @@ class ArrayComplexityUnitTest extends AbstractSniffUnitTest {
 	 * @return array<int, int>
 	 */
 	protected function getWarningList( $testFile = '' ) {
-		return [
-			12 => 1,
-			18 => 1,
-			52 => 1,
-			55 => 2,
-		];
+		return [];
 	}
 }

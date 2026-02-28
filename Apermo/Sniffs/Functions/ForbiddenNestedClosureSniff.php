@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Forbid nested closures and arrow functions.
  *

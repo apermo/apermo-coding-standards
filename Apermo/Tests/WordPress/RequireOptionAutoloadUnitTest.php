@@ -2,19 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Unit test for the ArrayComplexity sniff.
+ * Unit test for the RequireOptionAutoload sniff.
  *
- * @package Apermo\Tests\DataStructures
+ * @package Apermo\Tests\WordPress
  */
 
-namespace Apermo\Tests\DataStructures;
+namespace Apermo\Tests\WordPress;
 
 use PHP_CodeSniffer\Tests\Standards\AbstractSniffUnitTest;
 
 /**
- * Unit test for Apermo.DataStructures.ArrayComplexity.
+ * Unit test for Apermo.WordPress.RequireOptionAutoload.
  */
-class ArrayComplexityUnitTest extends AbstractSniffUnitTest {
+class RequireOptionAutoloadUnitTest extends AbstractSniffUnitTest {
 
 	/**
 	 * Returns the lines where errors should occur.
@@ -24,10 +24,7 @@ class ArrayComplexityUnitTest extends AbstractSniffUnitTest {
 	 * @return array<int, int>
 	 */
 	protected function getErrorList( $testFile = '' ) {
-		return [
-			15 => 1,
-			28 => 1,
-		];
+		return [];
 	}
 
 	/**
@@ -39,10 +36,9 @@ class ArrayComplexityUnitTest extends AbstractSniffUnitTest {
 	 */
 	protected function getWarningList( $testFile = '' ) {
 		return [
-			12 => 1,
-			18 => 1,
-			52 => 1,
-			55 => 2,
+			7  => 1, // add_option without autoload.
+			10 => 1, // update_option without autoload.
+			29 => 1, // add_option with 3 args (deprecated, no autoload).
 		];
 	}
 }
