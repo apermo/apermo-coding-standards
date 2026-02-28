@@ -212,6 +212,12 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoErrorsOnLine( $file, 12, 'Concat at start of line should be allowed.' );
 	}
 
+	public function testDisallowImplicitArrayCreation(): void {
+		$file = $this->processFixture( 'ImplicitArrayCreation.inc' );
+		$this->assertErrorOnLine( $file, 9, 'DisallowImplicitArrayCreation', 'Implicit array creation should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 16, 'Append to declared array should be allowed.' );
+	}
+
 	public function testStaticClosureRequired(): void {
 		$file = $this->processFixture( 'StaticClosure.inc' );
 		$this->assertErrorOnLine( $file, 8, 'StaticClosure', 'Non-static closure should be flagged.' );

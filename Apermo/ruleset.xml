@@ -55,6 +55,9 @@
 		<severity>0</severity>
 	</rule>
 
+	<!-- Disallow implicit array creation via $a[] = or $a['key'] = on undefined variable. -->
+	<rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
+
 	<!-- Disallow long array syntax. -->
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax">
 		<severity>10</severity>
