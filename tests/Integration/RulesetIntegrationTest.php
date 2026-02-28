@@ -343,7 +343,7 @@ class RulesetIntegrationTest extends TestCase {
 
 	public function testNoQueryPosts(): void {
 		$file = $this->processFixture( 'NoQueryPosts.inc' );
-		$this->assertErrorOnLine( $file, 5, 'NoQueryPosts', 'query_posts() should be flagged.' );
+		$this->assertErrorOnLine( $file, 5, 'DiscouragedFunctions', 'query_posts() should be flagged.' );
 	}
 
 	public function testPreferModernStringFunctions(): void {
@@ -361,9 +361,10 @@ class RulesetIntegrationTest extends TestCase {
 
 	public function testRequireAbsoluteIncludePath(): void {
 		$file = $this->processFixture( 'AbsoluteIncludePath.inc' );
-		$this->assertErrorOnLine( $file, 5, 'RequireAbsoluteIncludePath', 'Relative path should be flagged.' );
+		$this->assertErrorOnLine( $file, 5, 'RequireAbsoluteIncludePath', 'Relative require should be flagged.' );
 		$this->assertNoErrorsOnLine( $file, 8, '__DIR__ path should be allowed.' );
-		$this->assertNoErrorsOnLine( $file, 11, 'Constant path should be allowed.' );
+		$this->assertErrorOnLine( $file, 11, 'RequireAbsoluteIncludePath', 'Relative include should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 14, 'Constant path should be allowed.' );
 	}
 
 	public function testRequireOptionAutoload(): void {

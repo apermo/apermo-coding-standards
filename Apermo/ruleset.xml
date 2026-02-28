@@ -101,6 +101,11 @@
 		<type>error</type>
 	</rule>
 
+	<!-- query_posts() corrupts the main query; upgrade from warning to error. -->
+	<rule ref="WordPress.WP.DiscouragedFunctions.query_posts_query_posts">
+		<type>error</type>
+	</rule>
+
 	<!-- Disallow Yoda conditions. -->
 	<rule ref="Generic.ControlStructures.DisallowYodaConditions"/>
 

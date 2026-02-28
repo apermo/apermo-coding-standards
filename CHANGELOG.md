@@ -9,10 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `Apermo.WordPress.NoQueryPosts` sniff: flags
-  `query_posts()` calls as errors. This function
-  corrupts the main `WP_Query` and should be replaced
-  with `WP_Query` or `get_posts()`.
+- `query_posts()` upgraded from warning to error via
+  `WordPress.WP.DiscouragedFunctions` severity override.
+  This function corrupts the main `WP_Query` and should
+  be replaced with `WP_Query` or `get_posts()`.
 - `Apermo.PHP.PreferModernStringFunctions` sniff: flags
   `strpos()`/`strstr()` comparison patterns replaceable
   by `str_contains()` or `str_starts_with()` (PHP 8.0+).

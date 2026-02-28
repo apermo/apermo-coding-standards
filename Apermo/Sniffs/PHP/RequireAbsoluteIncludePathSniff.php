@@ -73,7 +73,7 @@ class RequireAbsoluteIncludePathSniff implements Sniff {
 			$keyword = $tokens[ $stackPtr ]['content'];
 			$phpcsFile->addError(
 				'%s with relative path detected; use an absolute path (__DIR__ . \'/...\') instead',
-				$first,
+				$stackPtr,
 				'RelativePath',
 				[ $keyword ],
 			);
