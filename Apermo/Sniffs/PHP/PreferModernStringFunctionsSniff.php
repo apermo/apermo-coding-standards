@@ -69,8 +69,12 @@ class PreferModernStringFunctionsSniff implements Sniff {
 			return;
 		}
 
+		// isFunctionCall() already confirmed the open paren; find the closer.
+		$open  = $phpcsFile->findNext( T_WHITESPACE, $stackPtr + 1, null, true );
+		$close = $tokens[ $open ]['parenthesis_closer'];
+
 		// Try forward pattern: func(...) === false / === 0.
-		if ( $this->checkForwardPattern( $phpcsFile, $stackPtr, $funcName ) ) {
+		if ( $this->checkForwardPattern( $phpcsFile, $stackPtr, $funcName, $close ) ) {
 			return;
 		}
 
@@ -84,31 +88,17 @@ class PreferModernStringFunctionsSniff implements Sniff {
 	 * @param File   $phpcsFile The file being scanned.
 	 * @param int    $stackPtr  Position of the function name token.
 	 * @param string $funcName  Lowercase function name (strpos or strstr).
+	 * @param int    $closePtr  Position of the closing parenthesis.
 	 *
 	 * @return bool Whether a violation was reported.
 	 */
-	private function checkForwardPattern( File $phpcsFile, int $stackPtr, string $funcName ): bool {
+	private function checkForwardPattern( File $phpcsFile, int $stackPtr, string $funcName, int $closePtr ): bool {
 		$tokens = $phpcsFile->getTokens();
 
-		// Find the opening parenthesis.
-		$open = $phpcsFile->findNext( T_WHITESPACE, $stackPtr + 1, null, true );
-		if ( $open === false || $tokens[ $open ]['code'] !== T_OPEN_PARENTHESIS ) {
-			return false;
-		}
-
-		if ( ! isset( $tokens[ $open ]['parenthesis_closer'] ) ) {
-			return false;
-		}
-
-		$close = $tokens[ $open ]['parenthesis_closer'];
-
 		// Look for === or !== after the closing paren.
-		$operator = $phpcsFile->findNext( T_WHITESPACE, $close + 1, null, true );
-		if ( $operator === false ) {
-			return false;
-		}
+		$operator = $phpcsFile->findNext( T_WHITESPACE, $closePtr + 1, null, true );
+		$opCode   = $operator !== false ? $tokens[ $operator ]['code'] : null;
 
-		$opCode = $tokens[ $operator ]['code'];
 		if ( $opCode !== T_IS_IDENTICAL && $opCode !== T_IS_NOT_IDENTICAL ) {
 			return false;
 		}
@@ -136,11 +126,8 @@ class PreferModernStringFunctionsSniff implements Sniff {
 
 		// Look back for === or !==.
 		$operator = $phpcsFile->findPrevious( T_WHITESPACE, $stackPtr - 1, null, true );
-		if ( $operator === false ) {
-			return false;
-		}
+		$opCode   = $operator !== false ? $tokens[ $operator ]['code'] : null;
 
-		$opCode = $tokens[ $operator ]['code'];
 		if ( $opCode !== T_IS_IDENTICAL && $opCode !== T_IS_NOT_IDENTICAL ) {
 			return false;
 		}

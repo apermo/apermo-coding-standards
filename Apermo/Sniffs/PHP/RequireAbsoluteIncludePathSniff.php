@@ -43,17 +43,12 @@ class RequireAbsoluteIncludePathSniff implements Sniff {
 		$tokens = $phpcsFile->getTokens();
 
 		// Find the first meaningful token after the keyword.
+		// There is always at least a semicolon or string after a require/include.
 		$first = $phpcsFile->findNext( T_WHITESPACE, $stackPtr + 1, null, true );
-		if ( $first === false ) {
-			return;
-		}
 
 		// Handle parenthesized syntax: require('file.php').
 		if ( $tokens[ $first ]['code'] === T_OPEN_PARENTHESIS ) {
 			$first = $phpcsFile->findNext( T_WHITESPACE, $first + 1, null, true );
-			if ( $first === false ) {
-				return;
-			}
 		}
 
 		$code = $tokens[ $first ]['code'];
@@ -70,7 +65,7 @@ class RequireAbsoluteIncludePathSniff implements Sniff {
 
 		// String literal: check if it starts with /.
 		if ( $code === T_CONSTANT_ENCAPSED_STRING ) {
-			$value = $this->stripQuotes( $tokens[ $first ]['content'] );
+			$value = substr( $tokens[ $first ]['content'], 1, -1 );
 			if ( strpos( $value, '/' ) === 0 ) {
 				return;
 			}
@@ -83,23 +78,5 @@ class RequireAbsoluteIncludePathSniff implements Sniff {
 				[ $keyword ],
 			);
 		}
-	}
-
-	/**
-	 * Strip surrounding quotes from a string token.
-	 *
-	 * @param string $value The quoted string.
-	 *
-	 * @return string The unquoted string.
-	 */
-	private function stripQuotes( string $value ): string {
-		if ( strlen( $value ) >= 2 ) {
-			$first = $value[0];
-			if ( ( $first === '\'' || $first === '"' ) && str_ends_with( $value, $first ) ) {
-				return substr( $value, 1, -1 );
-			}
-		}
-
-		return $value;
 	}
 }

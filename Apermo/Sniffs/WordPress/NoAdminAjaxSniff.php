@@ -83,8 +83,8 @@ class NoAdminAjaxSniff implements Sniff {
 	 * Handles single-quoted and double-quoted strings. Returns null for
 	 * variable or dynamic hook names that cannot be statically analyzed.
 	 *
-	 * @param File               $phpcsFile The file being scanned.
-	 * @param array<string, int> $param     Parameter info from PassedParameters.
+	 * @param File                $phpcsFile The file being scanned.
+	 * @param array<string, mixed> $param    Parameter info from PassedParameters.
 	 *
 	 * @return string|null The hook name or null if not determinable.
 	 */
@@ -111,27 +111,9 @@ class NoAdminAjaxSniff implements Sniff {
 				return null;
 			}
 
-			return $this->stripQuotes( $tokens[ $first ]['content'] );
+			return substr( $tokens[ $first ]['content'], 1, -1 );
 		}
 
 		return null;
-	}
-
-	/**
-	 * Strip surrounding quotes from a string token.
-	 *
-	 * @param string $value The quoted string.
-	 *
-	 * @return string The unquoted string.
-	 */
-	private function stripQuotes( string $value ): string {
-		if ( strlen( $value ) >= 2 ) {
-			$first = $value[0];
-			if ( ( $first === '\'' || $first === '"' ) && str_ends_with( $value, $first ) ) {
-				return substr( $value, 1, -1 );
-			}
-		}
-
-		return $value;
 	}
 }

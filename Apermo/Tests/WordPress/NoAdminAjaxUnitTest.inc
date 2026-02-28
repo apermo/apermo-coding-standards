@@ -29,3 +29,6 @@ $obj->add_action( 'wp_ajax_my_action', 'my_callback' );
 
 // OK: static method call.
 Hooks::add_action( 'wp_ajax_my_action', 'my_callback' );
+
+// OK: no arguments (cannot analyze).
+add_action();

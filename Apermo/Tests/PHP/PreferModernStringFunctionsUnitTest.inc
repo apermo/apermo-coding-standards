@@ -42,3 +42,8 @@ Str::strpos( $haystack, $needle );
 
 // OK: strstr with 0 is not flagged (strstr returns string, not int).
 if ( strstr( $haystack, $needle ) === 0 ) {}
+
+// WARNING: warning mode test.
+// phpcs:set Apermo.PHP.PreferModernStringFunctions error false
+if ( strpos( $haystack, $needle ) === false ) {}
+// phpcs:set Apermo.PHP.PreferModernStringFunctions error true

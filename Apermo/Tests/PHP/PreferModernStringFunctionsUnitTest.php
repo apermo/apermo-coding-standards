@@ -44,6 +44,8 @@ class PreferModernStringFunctionsUnitTest extends AbstractSniffUnitTest {
 	 * @return array<int, int>
 	 */
 	protected function getWarningList( $testFile = '' ) {
-		return [];
+		return [
+			48 => 1, // Warning mode: strpos === false.
+		];
 	}
 }
