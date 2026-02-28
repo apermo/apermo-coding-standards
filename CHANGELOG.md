@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `require`/`include` statements with relative paths.
   Use absolute paths (`__DIR__ . '/...'`) for
   predictable file resolution.
+- `Apermo.CodeQuality.ExcessiveParameterCount` sniff:
+  warns on functions with more than 6 parameters.
+  Configurable via `maxParameters` property.
 - `SlevomatCodingStandard.Classes.ClassStructure`:
   enforces consistent class member ordering (uses,
   constants, properties, constructor, methods).

@@ -375,6 +375,12 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoWarningsOnLine( $file, 16, 'update_option with autoload should be allowed.' );
 	}
 
+	public function testExcessiveParameterCount(): void {
+		$file = $this->processFixture( 'ExcessiveParameterCount.inc' );
+		$this->assertWarningOnLine( $file, 6, 'ExcessiveParameterCount', '7 params should warn.' );
+		$this->assertNoWarningsOnLine( $file, 11, '3 params should be allowed.' );
+	}
+
 	public function testClassStructure(): void {
 		$file = $this->processFixture( 'ClassStructure.inc' );
 		$this->assertErrorOnLine( $file, 12, 'ClassStructure', 'Property after method should be flagged.' );
