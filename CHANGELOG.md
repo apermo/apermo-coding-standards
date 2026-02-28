@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `require`/`include` statements with relative paths.
   Use absolute paths (`__DIR__ . '/...'`) for
   predictable file resolution.
+- `Apermo.WordPress.RequireWpErrorHandling` sniff: warns
+  when functions that can return `WP_Error` are assigned
+  to a variable without a subsequent `is_wp_error()` check.
 - `Apermo.WordPress.PreferWpdbIdentifierPlaceholder`
   sniff: warns when `%s` is used for SQL identifiers in
   `$wpdb->prepare()`. Use `%i` (WP 6.2+) instead.

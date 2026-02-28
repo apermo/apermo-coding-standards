@@ -375,6 +375,12 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoWarningsOnLine( $file, 16, 'update_option with autoload should be allowed.' );
 	}
 
+	public function testRequireWpErrorHandling(): void {
+		$file = $this->processFixture( 'WpErrorHandling.inc' );
+		$this->assertWarningOnLine( $file, 8, 'RequireWpErrorHandling', 'Unchecked wp_remote_get should warn.' );
+		$this->assertNoWarningsOnLine( $file, 14, 'Checked with is_wp_error should be allowed.' );
+	}
+
 	public function testPreferWpdbIdentifierPlaceholder(): void {
 		$file = $this->processFixture( 'WpdbIdentifierPlaceholder.inc' );
 		$this->assertWarningOnLine( $file, 6, 'PreferWpdbIdentifierPlaceholder', 'FROM %s should warn.' );
