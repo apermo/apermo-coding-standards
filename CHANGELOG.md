@@ -32,8 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sniff: warns when `%s` is used for SQL identifiers in
   `$wpdb->prepare()`. Use `%i` (WP 6.2+) instead.
 - `Apermo.WordPress.NoHardcodedTableNames` sniff: warns
-  on hardcoded `wp_` table names in SQL strings. Use
-  `$wpdb->tablename` or `$wpdb->prefix` instead.
+  on any hardcoded table name after SQL keywords (FROM,
+  JOIN, INTO, UPDATE, TABLE). Use `$wpdb->tablename` or
+  the `%i` placeholder instead. Optional `warnPrefix`
+  property to also flag `$wpdb->prefix` concatenation.
 - `Apermo.WordPress.SwitchToBlogRequiresRestore` sniff:
   flags `switch_to_blog()` without a matching
   `restore_current_blog()` in the same scope.
