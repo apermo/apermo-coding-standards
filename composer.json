@@ -31,7 +31,9 @@
 	},
 	"scripts": {
 		"test": "phpunit",
-		"analyse": "phpstan analyse"
+		"analyse": "phpstan analyse",
+		"post-install-cmd": "git config core.hooksPath .githooks || true",
+		"post-update-cmd": "git config core.hooksPath .githooks || true"
 	},
 	"autoload": {
 		"files": ["Apermo/polyfills.php"]

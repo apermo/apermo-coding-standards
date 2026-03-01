@@ -241,9 +241,9 @@ class RulesetIntegrationTest extends TestCase {
 
 	public function testMinimumVariableNameLength(): void {
 		$file = $this->processFixture( 'VariableNameLength.inc' );
-		$this->assertWarningOnLine( $file, 6, 'MinimumVariableNameLength', 'Short variable should warn.' );
-		$this->assertNoWarningsOnLine( $file, 8, 'Allowed short name should pass.' );
-		$this->assertNoWarningsOnLine( $file, 10, 'Long enough name should pass.' );
+		$this->assertWarningOnLine( $file, 7, 'MinimumVariableNameLength', 'Short variable should warn.' );
+		$this->assertNoWarningsOnLine( $file, 9, 'Allowed short name should pass.' );
+		$this->assertNoWarningsOnLine( $file, 11, 'Long enough name should pass.' );
 	}
 
 	public function testExitUsage(): void {
@@ -341,11 +341,82 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoErrorsOnLine( $file, 10, 'FILTER_SANITIZE_EMAIL should be allowed.' );
 	}
 
+	public function testNoQueryPosts(): void {
+		$file = $this->processFixture( 'NoQueryPosts.inc' );
+		$this->assertErrorOnLine( $file, 5, 'DiscouragedFunctions', 'query_posts() should be flagged.' );
+	}
+
+	public function testPreferModernStringFunctions(): void {
+		$file = $this->processFixture( 'ModernStringFunctions.inc' );
+		$this->assertErrorOnLine( $file, 5, 'PreferModernStringFunctions', 'strpos === false should be flagged.' );
+		$this->assertErrorOnLine( $file, 8, 'PreferModernStringFunctions', 'strpos === 0 should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 11, 'strpos without comparison should be allowed.' );
+	}
+
+	public function testNoAdminAjax(): void {
+		$file = $this->processFixture( 'NoAdminAjax.inc' );
+		$this->assertErrorOnLine( $file, 5, 'NoAdminAjax', 'wp_ajax_ hook should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 8, 'Non-ajax hook should be allowed.' );
+	}
+
+	public function testRequireAbsoluteIncludePath(): void {
+		$file = $this->processFixture( 'AbsoluteIncludePath.inc' );
+		$this->assertErrorOnLine( $file, 5, 'RequireAbsoluteIncludePath', 'Relative require should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 8, '__DIR__ path should be allowed.' );
+		$this->assertErrorOnLine( $file, 11, 'RequireAbsoluteIncludePath', 'Relative include should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 14, 'Constant path should be allowed.' );
+	}
+
 	public function testRequireOptionAutoload(): void {
 		$file = $this->processFixture( 'OptionAutoload.inc' );
 		$this->assertWarningOnLine( $file, 7, 'RequireOptionAutoload', 'add_option without autoload should warn.' );
 		$this->assertWarningOnLine( $file, 13, 'RequireOptionAutoload', 'update_option without autoload should warn.' );
 		$this->assertNoWarningsOnLine( $file, 10, 'add_option with autoload should be allowed.' );
 		$this->assertNoWarningsOnLine( $file, 16, 'update_option with autoload should be allowed.' );
+	}
+
+	public function testRequireWpErrorHandling(): void {
+		$file = $this->processFixture( 'WpErrorHandling.inc' );
+		$this->assertWarningOnLine( $file, 8, 'RequireWpErrorHandling', 'Unchecked wp_remote_get should warn.' );
+		$this->assertNoWarningsOnLine( $file, 14, 'Checked with is_wp_error should be allowed.' );
+	}
+
+	public function testPreferWpdbIdentifierPlaceholder(): void {
+		$file = $this->processFixture( 'WpdbIdentifierPlaceholder.inc' );
+		$this->assertWarningOnLine( $file, 6, 'PreferWpdbIdentifierPlaceholder', 'FROM %s should warn.' );
+		$this->assertNoWarningsOnLine( $file, 9, '%i should be allowed.' );
+	}
+
+	public function testNoHardcodedTableNames(): void {
+		$file = $this->processFixture( 'HardcodedTableNames.inc' );
+		$this->assertWarningOnLine( $file, 5, 'NoHardcodedTableNames', 'wp_posts should warn.' );
+		$this->assertWarningOnLine( $file, 8, 'NoHardcodedTableNames', 'Custom prefix should warn.' );
+		$this->assertNoWarningsOnLine( $file, 11, 'Placeholder should be allowed.' );
+	}
+
+	public function testSwitchToBlogRequiresRestore(): void {
+		$file = $this->processFixture( 'SwitchToBlogRestore.inc' );
+		$this->assertErrorOnLine( $file, 8, 'SwitchToBlogRequiresRestore', 'Missing restore should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 14, 'With restore should be allowed.' );
+	}
+
+	public function testSapiDependentFeatures(): void {
+		$file = $this->processFixture( 'SapiDependentFeatures.inc' );
+		$this->assertErrorOnLine( $file, 6, 'SapiDependentFeatures', 'INPUT_REQUEST should be an error.' );
+		$this->assertWarningOnLine( $file, 9, 'SapiDependentFeatures', 'INPUT_SERVER should warn.' );
+		$this->assertNoErrorsOnLine( $file, 12, 'INPUT_GET should be allowed.' );
+		$this->assertNoWarningsOnLine( $file, 12, 'INPUT_GET should not warn.' );
+	}
+
+	public function testExcessiveParameterCount(): void {
+		$file = $this->processFixture( 'ExcessiveParameterCount.inc' );
+		$this->assertWarningOnLine( $file, 6, 'ExcessiveParameterCount', '7 params should warn.' );
+		$this->assertNoWarningsOnLine( $file, 11, '3 params should be allowed.' );
+	}
+
+	public function testClassStructure(): void {
+		$file = $this->processFixture( 'ClassStructure.inc' );
+		$this->assertErrorOnLine( $file, 12, 'ClassStructure', 'Property after method should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 18, 'Correct class structure should be allowed.' );
 	}
 }

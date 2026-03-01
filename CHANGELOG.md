@@ -5,7 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.0] - Unreleased
+## [2.5.0] - 2026-03-01
+
+### Added
+
+- `query_posts()` upgraded from warning to error via
+  `WordPress.WP.DiscouragedFunctions` severity override.
+  This function corrupts the main `WP_Query` and should
+  be replaced with `WP_Query` or `get_posts()`.
+- `Apermo.PHP.PreferModernStringFunctions` sniff: flags
+  `strpos()`/`strstr()` comparison patterns replaceable
+  by `str_contains()` or `str_starts_with()` (PHP 8.0+).
+  Configurable as error (default) or warning.
+- `Apermo.WordPress.NoAdminAjax` sniff: flags
+  `add_action()` calls registering `wp_ajax_*` hooks.
+  Admin-ajax is slower and harder to debug than the
+  REST API. Use `register_rest_route()` instead.
+- `Apermo.PHP.RequireAbsoluteIncludePath` sniff: flags
+  `require`/`include` statements with relative paths.
+  Use absolute paths (`__DIR__ . '/...'`) for
+  predictable file resolution.
+- `Apermo.WordPress.RequireWpErrorHandling` sniff: warns
+  when functions that can return `WP_Error` are assigned
+  to a variable without a subsequent `is_wp_error()` check.
+- `Apermo.WordPress.PreferWpdbIdentifierPlaceholder`
+  sniff: warns when `%s` is used for SQL identifiers in
+  `$wpdb->prepare()`. Use `%i` (WP 6.2+) instead.
+- `Apermo.WordPress.NoHardcodedTableNames` sniff: warns
+  on any hardcoded table name after SQL keywords (FROM,
+  JOIN, INTO, UPDATE, TABLE). Use `$wpdb->tablename` or
+  the `%i` placeholder instead. Optional `warnPrefix`
+  property to also flag `$wpdb->prefix` concatenation.
+- `Apermo.WordPress.SwitchToBlogRequiresRestore` sniff:
+  flags `switch_to_blog()` without a matching
+  `restore_current_blog()` in the same scope.
+- `Apermo.PHP.SapiDependentFeatures` sniff: errors on
+  `filter_input(INPUT_REQUEST)` (never implemented),
+  warns on `INPUT_SERVER`/`INPUT_ENV` (null on CGI/FPM).
+- `Apermo.CodeQuality.ExcessiveParameterCount` sniff:
+  warns on functions with more than 6 parameters.
+  Configurable via `maxParameters` property.
+- `SlevomatCodingStandard.Classes.ClassStructure`:
+  enforces consistent class member ordering (uses,
+  constants, properties, constructor, methods).
+- Pre-commit hook (`.githooks/pre-commit`) running
+  PHPStan and PHPUnit with coverage. Auto-configured
+  via Composer `post-install-cmd`/`post-update-cmd`.
+
+## [2.4.0] - 2026-02-28
 
 ### Added
 
@@ -291,6 +338,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPCompatibility checks targeting PHP 8.3+.
 - Empty `Apermo/Sniffs/` directory for future custom sniffs.
 
+[2.5.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.1.0...v2.2.0
