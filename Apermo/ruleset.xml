@@ -250,8 +250,11 @@
 	<!-- Prevent redundant use for same-namespace classes. -->
 	<rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace"/>
 
-	<!-- Require backslash for global functions in namespaced code. -->
-	<rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions"/>
+	<!--
+		Replaced SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions
+		with Apermo.Namespaces.GlobalFunctionQualification (auto-discovered).
+		Native PHP functions require backslash, WordPress functions must not.
+	-->
 
 	<!-- Require backslash for global constants in namespaced code. -->
 	<rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>

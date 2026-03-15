@@ -20,9 +20,11 @@ use App\Service\Logger;
 
 // Inline FQN instead of use import — flagged (line 22).
 $obj = new \App\Service\Mailer();
-// Global function without backslash — flagged (line 24).
+// PHP native function without backslash — flagged (line 24).
 $exists = function_exists( 'my_function' );
 // Global constant without backslash — flagged (line 26).
 $version = PHP_VERSION;
 // Imported class — allowed (line 28).
 $logger = new Logger();
+// FQ non-native function — flagged (line 30).
+$path = \plugin_dir_path( __FILE__ );

@@ -5,7 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.6.0] - Unreleased
+## [2.6.1] - 2026-03-15
+
+### Added
+
+- `Apermo.Namespaces.GlobalFunctionQualification` sniff:
+  requires `\strlen()` for PHP native functions (performance)
+  and prohibits `\plugin_dir_path()` for non-native functions
+  (testability). Auto-fixable. Only applies in namespaced code.
+
+### Changed
+
+- Replaced `SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions`
+  with `Apermo.Namespaces.GlobalFunctionQualification`.
+  The Slevomat rule was too broad — it required backslash on
+  all global functions including WordPress core functions.
+
+## [2.6.0] - 2026-03-15
 
 ### Added
 
@@ -20,8 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   force explicit `use` imports instead of inline FQN.
 - `SlevomatCodingStandard.Namespaces.UseFromSameNamespace`:
   prevent redundant `use` for same-namespace classes.
-- `SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions`:
-  require `\function_exists()` in namespaced code.
 - `SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants`:
   require `\PHP_VERSION` in namespaced code.
 - `ids` added to `MinimumVariableNameLength` default
@@ -367,6 +381,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPCompatibility checks targeting PHP 8.3+.
 - Empty `Apermo/Sniffs/` directory for future custom sniffs.
 
+[2.6.1]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.3.0...v2.4.0
