@@ -415,6 +415,15 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoWarningsOnLine( $file, 11, '3 params should be allowed.' );
 	}
 
+	public function testNamespaceHygieneRules(): void {
+		$file = $this->processFixture( 'NamespaceHygiene.inc' );
+		$this->assertErrorOnLine( $file, 17, 'ReferenceUsedNamesOnly', 'Inline FQN should be flagged.' );
+		$this->assertErrorOnLine( $file, 19, 'UseFromSameNamespace', 'Same-namespace use should be flagged.' );
+		$this->assertErrorOnLine( $file, 21, 'FullyQualifiedGlobalFunctions', 'Global function without backslash should be flagged.' );
+		$this->assertErrorOnLine( $file, 23, 'FullyQualifiedGlobalConstants', 'Global constant without backslash should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 26, 'Imported class should be allowed.' );
+	}
+
 	public function testIncrementDecrementEnforcement(): void {
 		$file = $this->processFixture( 'IncrementDecrement.inc' );
 		$this->assertErrorOnLine( $file, 12, 'PreIncrementFound', 'Pre-increment should be flagged.' );
