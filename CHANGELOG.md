@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   flags `++$var` and `--$var` in favor of `$var++` and
   `$var--`. Auto-fixable. Handles complex identifiers
   like `$obj->prop`, `self::$var`, and `$arr['key']`.
-- Standalone-only increment/decrement rule via Slevomat:
-  restricts `++`/`--` to standalone statements and loop
-  contexts only.
+- `SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators`:
+  restricts `++`/`--` to standalone statements and
+  loop contexts only.
 - `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly`:
   force explicit `use` imports instead of inline FQN.
 - `SlevomatCodingStandard.Namespaces.UseFromSameNamespace`:
@@ -30,9 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Excluded `DisallowStandalonePostIncrementDecrement`
-  from WordPress block. We enforce post-increment over
-  pre-increment.
+- Excluded `Universal.Operators.DisallowStandalonePostIncrementDecrement`
+  from WordPress block. We enforce post-increment
+  over pre-increment.
 
 ## [2.5.0] - 2026-03-01
 
