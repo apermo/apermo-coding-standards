@@ -19,3 +19,11 @@ $obj->prop++;
 self::$count++;
 // Post-increment on array access — allowed.
 $arr['key']++;
+// Pre-increment on chained property + array — flagged.
+++$obj->items['key'];
+// Pre-increment on parent static property — flagged.
+++parent::$count;
+// Increment after non-variable (literal) — allowed.
+1 + 1;
+// Pre-increment with whitespace before variable — flagged.
+++ $a;

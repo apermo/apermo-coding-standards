@@ -30,6 +30,9 @@ class DisallowPreIncrementDecrementUnitTest extends AbstractSniffUnitTest {
 			11 => 1, // ++$obj->prop
 			13 => 1, // ++self::$count
 			15 => 1, // ++$arr['key']
+			23 => 1, // ++$obj->items['key']
+			25 => 1, // ++parent::$count
+			29 => 1, // ++ $a (with whitespace)
 		];
 	}
 
