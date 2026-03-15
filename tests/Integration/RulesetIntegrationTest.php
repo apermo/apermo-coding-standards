@@ -419,9 +419,10 @@ class RulesetIntegrationTest extends TestCase {
 		$file = $this->processFixture( 'NamespaceHygiene.inc' );
 		$this->assertErrorOnLine( $file, 17, 'UseFromSameNamespace', 'Same-namespace use should be flagged.' );
 		$this->assertErrorOnLine( $file, 22, 'ReferenceUsedNamesOnly', 'Inline FQN should be flagged.' );
-		$this->assertErrorOnLine( $file, 24, 'FullyQualifiedGlobalFunctions', 'Global function without backslash should be flagged.' );
+		$this->assertErrorOnLine( $file, 24, 'NativeNotFullyQualified', 'PHP native function without backslash should be flagged.' );
 		$this->assertErrorOnLine( $file, 26, 'FullyQualifiedGlobalConstants', 'Global constant without backslash should be flagged.' );
 		$this->assertNoErrorsOnLine( $file, 28, 'Imported class should be allowed.' );
+		$this->assertErrorOnLine( $file, 30, 'NonNativeFullyQualified', 'FQ non-native function should be flagged.' );
 	}
 
 	public function testIncrementDecrementEnforcement(): void {
