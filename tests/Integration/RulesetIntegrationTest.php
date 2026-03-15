@@ -415,6 +415,15 @@ class RulesetIntegrationTest extends TestCase {
 		$this->assertNoWarningsOnLine( $file, 11, '3 params should be allowed.' );
 	}
 
+	public function testIncrementDecrementEnforcement(): void {
+		$file = $this->processFixture( 'IncrementDecrement.inc' );
+		$this->assertErrorOnLine( $file, 12, 'PreIncrementFound', 'Pre-increment should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 14, 'Standalone post-increment should be allowed.' );
+		$this->assertNoErrorsOnLine( $file, 16, 'Post-increment in for() should be allowed.' );
+		$this->assertErrorOnLine( $file, 18, 'RequireOnlyStandaloneIncrementAndDecrementOperators', 'Non-standalone increment should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 20, 'Post-decrement standalone should be allowed.' );
+	}
+
 	public function testClassStructure(): void {
 		$file = $this->processFixture( 'ClassStructure.inc' );
 		$this->assertErrorOnLine( $file, 12, 'ClassStructure', 'Property after method should be flagged.' );

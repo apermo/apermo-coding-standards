@@ -25,6 +25,8 @@
 		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
 		<!-- We disallow Yoda conditions. -->
 		<exclude name="WordPress.PHP.YodaConditions"/>
+		<!-- We enforce post-increment, not pre-increment. -->
+		<exclude name="Universal.Operators.DisallowStandalonePostIncrementDecrement"/>
 		<!-- We allow short open tags. -->
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
 		<!-- We allow short open tags. -->
@@ -139,6 +141,9 @@
 
 	<!-- Disallow alternative control structure syntax (endif, endwhile, etc.). -->
 	<rule ref="Universal.ControlStructures.DisallowAlternativeSyntax"/>
+
+	<!-- Only allow increment/decrement as standalone statements or in for()/while(). -->
+	<rule ref="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators"/>
 
 	<!-- Require null coalesce operator ?? instead of isset() ternary. -->
 	<rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator"/>
