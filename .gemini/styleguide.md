@@ -12,6 +12,7 @@ This is a `phpcodesniffer-standard` Composer package providing a shared PHPCS ru
 - Flag new code that duplicates existing functionality in the repository.
 - Every PHP file must start with `declare(strict_types=1);` after the opening `<?php` tag.
 - Prefer post-increment (`$var++`) over pre-increment (`++$var`).
+- In namespaced code, fully qualify PHP native functions (`\strlen()`, `\in_array()`) for performance. Do not fully qualify WordPress functions (`plugin_dir_path()`, `wp_remote_get()`) — it breaks mocking in unit tests.
 
 ## File Operations
 
