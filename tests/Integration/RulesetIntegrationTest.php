@@ -427,11 +427,13 @@ class RulesetIntegrationTest extends TestCase {
 
 	public function testIncrementDecrementEnforcement(): void {
 		$file = $this->processFixture( 'IncrementDecrement.inc' );
-		$this->assertErrorOnLine( $file, 12, 'PreIncrementFound', 'Pre-increment should be flagged.' );
-		$this->assertNoErrorsOnLine( $file, 14, 'Standalone post-increment should be allowed.' );
-		$this->assertNoErrorsOnLine( $file, 16, 'Post-increment in for() should be allowed.' );
-		$this->assertErrorOnLine( $file, 18, 'RequireOnlyStandaloneIncrementAndDecrementOperators', 'Non-standalone increment should be flagged.' );
-		$this->assertNoErrorsOnLine( $file, 20, 'Post-decrement standalone should be allowed.' );
+		$this->assertErrorOnLine( $file, 13, 'PreIncrementFound', 'Pre-increment should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 15, 'Standalone post-increment should be allowed.' );
+		$this->assertNoErrorsOnLine( $file, 17, 'Post-increment in for() should be allowed.' );
+		$this->assertErrorOnLine( $file, 19, 'RequireOnlyStandaloneIncrementAndDecrementOperators', 'Non-standalone increment should be flagged.' );
+		$this->assertNoErrorsOnLine( $file, 21, 'Post-decrement standalone should be allowed.' );
+		$this->assertNoErrorsOnLine( $file, 23, 'Manual increment should not suggest pre-increment.' );
+		$this->assertNoErrorsOnLine( $file, 25, 'Manual decrement should not suggest pre-decrement.' );
 	}
 
 	public function testClassStructure(): void {

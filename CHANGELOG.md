@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.2] - Unreleased
+
+### Fixed
+
+- Excluded `Squiz.Operators.IncrementDecrementUsage` from WordPress
+  block. The sniff suggests pre-increment (`++$var`) for patterns
+  like `$var = $var + 1`, conflicting with our post-increment
+  preference enforced by `DisallowPreIncrementDecrement`.
+
 ## [2.6.1] - 2026-03-15
 
 ### Added
@@ -381,6 +390,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPCompatibility checks targeting PHP 8.3+.
 - Empty `Apermo/Sniffs/` directory for future custom sniffs.
 
+[2.6.2]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.4.0...v2.5.0
