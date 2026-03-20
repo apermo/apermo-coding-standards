@@ -27,6 +27,8 @@
 		<exclude name="WordPress.PHP.YodaConditions"/>
 		<!-- We enforce post-increment, not pre-increment. -->
 		<exclude name="Universal.Operators.DisallowStandalonePostIncrementDecrement"/>
+		<!-- Suggests pre-increment; conflicts with DisallowPreIncrementDecrement. -->
+		<exclude name="Squiz.Operators.IncrementDecrementUsage"/>
 		<!-- We allow short open tags. -->
 		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
 		<!-- We allow short open tags. -->
