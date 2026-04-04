@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.7.0] - Unreleased
 
+### Added
+
+- `Apermo.Commenting.DocCommentDescription` sniff: replaces
+  `Generic.Commenting.DocComment.MissingShort` with support
+  for `@see` and `@phpstan-ignore(-next-line)` as valid first
+  content in doc comments.
+- Project configuration guide in README with required
+  `phpcs.xml` properties (`text_domain`, `prefixes`,
+  `minimum_wp_version`) and a `phpcs.xml.dist.example` file.
+
 ### Changed
 
 - Removed `Universal.UseStatements.DisallowUseFunction`.
