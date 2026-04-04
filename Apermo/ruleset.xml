@@ -13,6 +13,11 @@
 		<severity>0</severity>
 	</rule>
 
+	<!-- Superseded by Apermo.Commenting.DocCommentDescription. -->
+	<rule ref="Generic.Commenting.DocComment.MissingShort">
+		<severity>0</severity>
+	</rule>
+
 	<!-- WordPress Ruleset -->
 	<rule ref="WordPress">
 		<!-- We use short array syntax. -->
