@@ -281,9 +281,8 @@
 	<!-- Require backslash for global constants in namespaced code. -->
 	<rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
 
-	<!-- For namespaced functions/constants: import the namespace, not the function/constant. -->
+	<!-- For namespaced constants: import the namespace, not the constant. -->
 	<rule ref="Universal.UseStatements.DisallowUseConst"/>
-	<rule ref="Universal.UseStatements.DisallowUseFunction"/>
 
 	<rule ref="PSR1.Classes.ClassDeclaration"/>
 
