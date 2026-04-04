@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - Unreleased
+
+### Changed
+
+- Removed `Universal.UseStatements.DisallowUseFunction`.
+  `use function` imports are now allowed, resolving the
+  catch-22 where namespaced functions could neither be
+  imported nor called via FQN. Global function handling
+  is unaffected (`GlobalFunctionQualification` still
+  enforces backslash for native PHP functions).
+
+### Fixed
+
+- `SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly`
+  no longer fires in files without a namespace declaration.
+  FQN like `\Throwable` or `\RuntimeException` are valid
+  in no-namespace files where `use` statements are pointless.
+
 ## [2.6.4] - Unreleased
 
 ### Added
@@ -414,6 +432,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPCompatibility checks targeting PHP 8.3+.
 - Empty `Apermo/Sniffs/` directory for future custom sniffs.
 
+[2.7.0]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.4...v2.7.0
 [2.6.4]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.3...v2.6.4
 [2.6.3]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/apermo/apermo-coding-standards/compare/v2.6.1...v2.6.2
