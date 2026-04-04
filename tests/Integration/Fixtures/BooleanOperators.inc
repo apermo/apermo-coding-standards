@@ -27,7 +27,7 @@ if (
 	echo 1;
 }
 
-// Multi-line condition not fully split — should be flagged (line 31).
+// Multi-line condition not fully split — should be flagged (line 33).
 // phpcs:disable PSR12.ControlStructures.BooleanOperatorPlacement
 // phpcs:disable Generic.CodeAnalysis.RequireExplicitBooleanOperatorPrecedence
 if (
@@ -48,12 +48,12 @@ if (
 	echo 1;
 }
 
-// Mixed operators without parentheses — should be flagged (line 51).
+// Mixed operators without parentheses — should be flagged (line 53).
 // phpcs:disable SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition
 $d = $a && $b || $c;
 // phpcs:enable SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition
 
-// Mixed operators with parentheses — should be allowed (line 55).
+// Mixed operators with parentheses — should be allowed (line 58).
 // phpcs:disable SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition
 $e = ( $a && $b ) || $c;
 // phpcs:enable SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition
